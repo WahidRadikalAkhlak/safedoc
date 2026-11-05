@@ -1,0 +1,33 @@
+<?php
+
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TwoFactorController;
+use Illuminate\Support\Facades\Route;
+
+// Halaman Promosi SafeDoc
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// Rute Autentikasi 2FA
+Route::middleware(['auth'])->group(function () {
+    Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('2fa.setup');
+    Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
+    Route::get('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
+    Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
+});
+
+// Area Terproteksi (Login + 2FA Verified)
+Route::middleware(['auth', 'verified', '2fa'])->group(function () {
+    Route::get('/dashboard', [DocumentController::class, 'index'])->name('dashboard');
+
+    Route::resource('documents', DocumentController::class)->except(['show', 'edit', 'update']);
+    Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
