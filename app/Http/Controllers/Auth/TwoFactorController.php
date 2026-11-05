@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Auth; // Namespace sudah disesuaikan ke folder Auth
+namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller; // Tambahkan ini karena pindah folder
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use PragmaRX\Google2FAQRCode\Google2FA;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class TwoFactorController extends Controller
 {
-    // Menampilkan Barcode QR Code untuk di-scan via Inertia
     public function setup()
     {
         $user = auth()->user();
@@ -25,7 +22,6 @@ class TwoFactorController extends Controller
 
         $google2fa = new \PragmaRX\Google2FA\Google2FA();
 
-        // Buat URL QR Code Authenticator
         $qrCodeUrl = $google2fa->getQRCodeUrl(
             config('app.name'),
             $user->email,
@@ -39,14 +35,12 @@ class TwoFactorController extends Controller
         $writer = new Writer($renderer);
         $qrCodeSvg = base64_encode($writer->writeString($qrCodeUrl));
 
-        // Ubah dari view() menjadi Inertia::render()
         return Inertia::render('Auth/TwoFactorSetup', [
             'qrCodeSvg' => $qrCodeSvg,
             'secret' => $user->google2fa_secret,
         ]);
     }
 
-    // Mengaktifkan 2FA setelah user memasukkan kode verifikasi pertama kali
     public function enable(Request $request)
     {
         $request->validate([
@@ -64,20 +58,36 @@ class TwoFactorController extends Controller
 
             session(['2fa_verified' => true]);
 
+            activity('security')
+                ->causedBy($user)
+                ->event('2fa_enabled')
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ])
+                ->log('Mengaktifkan proteksi Google Authenticator (2FA) untuk pertama kali');
+
             return redirect()->route('dashboard')->with('success', 'Keamanan 2FA Authenticator aktif. Akun SafeDoc Anda kini terlindungi penuh.');
         }
+
+        activity('security')
+            ->causedBy($user)
+            ->event('2fa_failed')
+            ->withProperties([
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'stage' => 'setup',
+            ])
+            ->log('Gagal verifikasi kode OTP saat mencoba mengaktifkan 2FA');
 
         return back()->withErrors(['code' => 'Kode OTP salah atau telah kadaluarsa. Silakan coba lagi.']);
     }
 
-    // Layar input 6-digit OTP saat login via Inertia
     public function challenge()
     {
-        // Ubah dari view() menjadi Inertia::render()
         return Inertia::render('Auth/TwoFactorChallenge');
     }
 
-    // Verifikasi kode saat login
     public function verify(Request $request)
     {
         $request->validate([
@@ -91,8 +101,29 @@ class TwoFactorController extends Controller
 
         if ($valid) {
             session(['2fa_verified' => true]);
+
+            activity('security')
+                ->causedBy($user)
+                ->event('2fa_verified')
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ])
+                ->log('Lolos verifikasi 2FA OTP dan membuka kunci Brankas');
+
             return redirect()->intended(route('dashboard'));
         }
+
+        // Catat Peringatan Keamanan jika kode OTP salah
+        activity('security')
+            ->causedBy($user)
+            ->event('2fa_failed')
+            ->withProperties([
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'stage' => 'login_challenge',
+            ])
+            ->log('PERINGATAN: Percobaan gagal memasukkan kode OTP 2FA saat login');
 
         return back()->withErrors(['code' => 'Kode autentikasi tidak valid. Periksa aplikasi Authenticator Anda.']);
     }

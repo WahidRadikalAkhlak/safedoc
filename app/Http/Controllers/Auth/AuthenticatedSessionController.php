@@ -33,9 +33,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Pindahkan forget() ke atas sini agar tereksekusi sebelum redirect
-        // Ini memastikan status 2FA di-reset setiap kali user login ulang
         $request->session()->forget('2fa_verified');
+
+        activity('security')
+            ->causedBy($request->user())
+            ->event('login')
+            ->withProperties([
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ])
+            ->log('Berhasil autentikasi kata sandi (Tahap 1 Login)');
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -45,6 +52,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = $request->user();
+
+        if ($user) {
+            activity('security')
+                ->causedBy($user)
+                ->event('logout')
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ])
+                ->log('Mengunci brankas dan keluar dari sesi (Log Out)');
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
