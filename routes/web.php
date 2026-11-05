@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SecurityCenterController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,14 @@ Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::resource('documents', DocumentController::class)->except(['show', 'edit']);
     Route::get('documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+    // Rute Pusat Keamanan & Integritas
+    Route::get('/security-center', [SecurityCenterController::class, 'index'])->name('security.index');
+    Route::post('/security-center/verify-integrity', [SecurityCenterController::class, 'verifyIntegrity'])->name('security.verify-integrity');
+    Route::post('/security-center/reset-2fa', [SecurityCenterController::class, 'resetTwoFactor'])->name('security.reset-2fa');
+
+    // Endpoint JSON untuk Lonceng Notifikasi di Header
+    Route::get('/vault-notifications', [SecurityCenterController::class, 'recentNotifications'])->name('vault.notifications');
 
     // Rute Riwayat Aktivitas & Audit Trail
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

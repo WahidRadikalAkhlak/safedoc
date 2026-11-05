@@ -1,24 +1,65 @@
 import React, { useState } from "react";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, router, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout";
 import AddModal from "./Modals/AddModal";
 import EditModal from "./Modals/EditModal";
 import DeleteModal from "./Modals/DeleteModal";
+import PreviewModal from "./Modals/PreviewModal";
+import { Search, Plus, Eye, Download, Edit3, Trash2 } from "lucide-react";
 
-export default function Index({ documents, totalCapacityMB, totalFiles }) {
+export default function Index({
+    documents,
+    totalCapacityMB,
+    totalFiles,
+    filters = {},
+}) {
     const { flash } = usePage().props;
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [documentToPreview, setDocumentToPreview] = useState(null);
     const [documentToEdit, setDocumentToEdit] = useState(null);
     const [documentToDelete, setDocumentToDelete] = useState(null);
+
+    const [searchQuery, setSearchQuery] = useState(filters.search || "");
+    const activeCategory = filters.category || "all";
+
+    const handleCategoryFilter = (cat) => {
+        router.get(
+            "/dashboard",
+            { category: cat, search: searchQuery },
+            { preserveState: true, preserveScroll: true },
+        );
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        router.get(
+            "/dashboard",
+            { category: activeCategory, search: searchQuery },
+            { preserveState: true, preserveScroll: true },
+        );
+    };
+
+    const categoryBadges = {
+        sertifikat_tanah: "bg-amber-50 text-amber-700 border-amber-200",
+        bpkb: "bg-blue-50 text-blue-700 border-blue-200",
+        wasiat: "bg-purple-50 text-purple-700 border-purple-200",
+        lainnya: "bg-slate-100 text-slate-700 border-slate-200",
+    };
 
     return (
         <AuthenticatedLayout>
             <Head title="Brankas Dokumen" />
 
-            {/* Kumpulan Komponen Modal */}
+            {/* Kumpulan Komponen Modal Interaktif */}
             <AddModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
+            />
+
+            <PreviewModal
+                isOpen={!!documentToPreview}
+                onClose={() => setDocumentToPreview(null)}
+                document={documentToPreview}
             />
 
             <EditModal
@@ -49,26 +90,13 @@ export default function Index({ documents, totalCapacityMB, totalFiles }) {
                         onClick={() => setIsAddModalOpen(true)}
                         className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl font-bold text-sm text-white shadow-[0_8px_16px_rgba(14,165,233,0.25)] hover:shadow-[0_8px_20px_rgba(14,165,233,0.4)] transition transform hover:-translate-y-0.5"
                     >
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2.5"
-                                d="M12 4v16m8-8H4"
-                            />
-                        </svg>
+                        <Plus size={18} strokeWidth={2.5} />
                         Upload Dokumen
                     </button>
                 </div>
 
-                {/* Notifikasi Flash dari Backend (opsional, karena sudah pakai Toast) */}
                 {flash?.success && (
-                    <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-sm">
+                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-sm">
                         {flash.success}
                     </div>
                 )}
@@ -110,6 +138,51 @@ export default function Index({ documents, totalCapacityMB, totalFiles }) {
                     </div>
                 </div>
 
+                {/* Bar Filter Kategori & Pencarian Cepat */}
+                <div className="bg-white p-4 sm:p-5 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                        {[
+                            { key: "all", label: "Semua Berkas" },
+                            {
+                                key: "sertifikat_tanah",
+                                label: "Sertifikat Tanah",
+                            },
+                            { key: "bpkb", label: "BPKB" },
+                            { key: "wasiat", label: "Surat Wasiat" },
+                            { key: "lainnya", label: "Lainnya" },
+                        ].map((tab) => (
+                            <button
+                                key={tab.key}
+                                onClick={() => handleCategoryFilter(tab.key)}
+                                className={`px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
+                                    activeCategory === tab.key
+                                        ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-md shadow-sky-500/20"
+                                        : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <form
+                        onSubmit={handleSearch}
+                        className="relative w-full md:w-72"
+                    >
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Cari nama dokumen atau file..."
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 outline-none transition"
+                        />
+                        <Search
+                            size={16}
+                            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
+                    </form>
+                </div>
+
                 {/* Tabel Dokumen */}
                 <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                     {documents.data.length === 0 ? (
@@ -130,17 +203,17 @@ export default function Index({ documents, totalCapacityMB, totalFiles }) {
                                 </svg>
                             </div>
                             <h3 className="text-lg font-black text-slate-800">
-                                Brankas Masih Kosong
+                                Tidak Ada Dokumen Ditemukan
                             </h3>
                             <p className="text-sm font-medium text-slate-500 mt-2">
                                 Mulai amankan sertifikat tanah, BPKB, atau
-                                berkas privat Anda.
+                                berkas privat Anda ke dalam brankas.
                             </p>
                             <button
                                 onClick={() => setIsAddModalOpen(true)}
                                 className="mt-6 px-6 py-2.5 bg-sky-50 text-sky-600 font-bold text-sm rounded-xl hover:bg-sky-100 transition"
                             >
-                                + Simpan Dokumen Pertama
+                                + Simpan Dokumen Baru
                             </button>
                         </div>
                     ) : (
@@ -174,7 +247,14 @@ export default function Index({ documents, totalCapacityMB, totalFiles }) {
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6">
-                                                <span className="px-3 py-1.5 bg-slate-100 text-slate-600 text-[11px] font-black uppercase tracking-wider rounded-lg">
+                                                <span
+                                                    className={`px-3 py-1.5 text-[11px] font-black uppercase tracking-wider rounded-lg border ${
+                                                        categoryBadges[
+                                                            doc.category
+                                                        ] ||
+                                                        categoryBadges.lainnya
+                                                    }`}
+                                                >
                                                     {doc.category.replace(
                                                         "_",
                                                         " ",
@@ -191,44 +271,66 @@ export default function Index({ documents, totalCapacityMB, totalFiles }) {
                                                 KB
                                             </td>
                                             <td className="py-4 px-6 text-right space-x-2">
-                                                <a
-                                                    href={`/documents/${doc.id}/preview`}
-                                                    target="_blank"
-                                                    className="inline-block px-4 py-2 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 transition"
+                                                <button
+                                                    onClick={() =>
+                                                        setDocumentToPreview(
+                                                            doc,
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 text-xs font-bold transition"
                                                 >
-                                                    Lihat
-                                                </a>
+                                                    <Eye size={14} /> Lihat
+                                                </button>
                                                 <a
                                                     href={`/documents/${doc.id}/download`}
-                                                    className="inline-block px-4 py-2 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
+                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-bold transition"
                                                 >
-                                                    Unduh
+                                                    <Download size={14} /> Unduh
                                                 </a>
-
-                                                {/* Tombol Edit */}
                                                 <button
                                                     onClick={() =>
                                                         setDocumentToEdit(doc)
                                                     }
-                                                    className="inline-block px-4 py-2 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition"
+                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 text-xs font-bold transition"
                                                 >
-                                                    Edit
+                                                    <Edit3 size={14} /> Edit
                                                 </button>
-
-                                                {/* Tombol Hapus */}
                                                 <button
                                                     onClick={() =>
                                                         setDocumentToDelete(doc)
                                                     }
-                                                    className="inline-block px-4 py-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 hover:shadow-[0_4px_12px_rgba(225,29,72,0.15)] transition"
+                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold transition"
                                                 >
-                                                    Hapus
+                                                    <Trash2 size={14} /> Hapus
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    )}
+
+                    {/* Pagination */}
+                    {documents.links && documents.links.length > 3 && (
+                        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-1.5 bg-slate-50/40">
+                            {documents.links.map((link, idx) => (
+                                <Link
+                                    key={idx}
+                                    href={link.url || "#"}
+                                    preserveScroll
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                                        link.active
+                                            ? "bg-sky-600 text-white shadow-sm"
+                                            : link.url
+                                              ? "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                                              : "text-slate-300 pointer-events-none"
+                                    }`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>

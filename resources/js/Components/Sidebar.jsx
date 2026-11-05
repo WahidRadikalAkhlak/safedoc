@@ -1,6 +1,12 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { FolderLock, UserCog, LogOut, Activity } from "lucide-react";
+import {
+    FolderLock,
+    ShieldCheck,
+    Activity,
+    UserCog,
+    LogOut,
+} from "lucide-react";
 
 export default function Sidebar() {
     const { url } = usePage();
@@ -13,13 +19,19 @@ export default function Sidebar() {
             icon: FolderLock,
         },
         {
+            name: "Pusat Keamanan",
+            href: "/security-center",
+            active: url.startsWith("/security-center"),
+            icon: ShieldCheck,
+        },
+        {
             name: "Riwayat Aktivitas",
             href: "/activity-logs",
             active: url.startsWith("/activity-logs"),
             icon: Activity,
         },
         {
-            name: "Profil & Keamanan",
+            name: "Profil & Sandi",
             href: "/profile",
             active: url.startsWith("/profile"),
             icon: UserCog,

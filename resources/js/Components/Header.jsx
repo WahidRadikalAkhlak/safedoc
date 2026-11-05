@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
+import axios from "axios";
 import {
     Bell,
-    Check,
+    CheckCircle2,
+    XCircle,
+    AlertTriangle,
+    Info,
     ShieldCheck,
     UserCog,
     LogOut,
@@ -16,12 +20,22 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
 
     const [profileOpen, setProfileOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [notifications, setNotifications] = useState([]);
     const dropdownRef = useRef(null);
     const notifRef = useRef(null);
 
-    // Placeholder untuk UI Notifikasi
-    const unreadCount = 0;
-    const notifications = [];
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const fetchNotifications = async () => {
+        try {
+            const res = await axios.get("/vault-notifications");
+            setNotifications(res.data.notifications || []);
+        } catch (err) {
+            console.error("Gagal memuat notifikasi brankas", err);
+        }
+    };
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -39,6 +53,23 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const getNotifIcon = (type) => {
+        switch (type) {
+            case "success":
+                return (
+                    <CheckCircle2 className="text-emerald-500 w-5 h-5 shrink-0" />
+                );
+            case "danger":
+                return <XCircle className="text-rose-500 w-5 h-5 shrink-0" />;
+            case "warning":
+                return (
+                    <AlertTriangle className="text-amber-500 w-5 h-5 shrink-0" />
+                );
+            default:
+                return <Info className="text-sky-500 w-5 h-5 shrink-0" />;
+        }
+    };
 
     const handleLogout = (e) => {
         e.preventDefault();
@@ -59,10 +90,6 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                 @keyframes wave-navy {
                     0%, 100% { transform: translateY(0px); opacity: 0.7; }
                     50% { transform: translateY(-8px); opacity: 0.3; }
-                }
-                @keyframes wave-emas {
-                    0%, 100% { transform: translateY(0px); opacity: 0.3; }
-                    50% { transform: translateY(8px); opacity: 0.7; }
                 }
             `}</style>
 
@@ -110,13 +137,15 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
 
                 {/* KANAN: Notifikasi & Profil Dropdown */}
                 <div className="flex items-center gap-x-3 sm:gap-x-5 relative z-10">
-                    {/* Badge Keamanan */}
-                    <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50/90 backdrop-blur-md px-4 py-2 rounded-xl border border-emerald-100 shadow-sm">
+                    <Link
+                        href="/security-center"
+                        className="hidden sm:flex items-center gap-1.5 bg-emerald-50/90 hover:bg-emerald-100/80 backdrop-blur-md px-4 py-2 rounded-xl border border-emerald-100 shadow-sm transition"
+                    >
                         <Lock size={14} className="text-emerald-500" />
                         <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
-                            AES-256 Secured
+                            AES-256 + 2FA Aktif
                         </span>
-                    </div>
+                    </Link>
 
                     {/* Lonceng Notifikasi */}
                     <div
@@ -127,39 +156,93 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                             onClick={() => {
                                 setIsNotifOpen(!isNotifOpen);
                                 setProfileOpen(false);
+                                if (!isNotifOpen) fetchNotifications();
                             }}
-                            className={`relative p-2.5 rounded-2xl transition-all border shadow-sm ${isNotifOpen ? "bg-sky-50 text-sky-600 border-sky-200" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-sky-600"}`}
+                            className={`relative p-2.5 rounded-2xl transition-all border shadow-sm ${
+                                isNotifOpen
+                                    ? "bg-sky-50 text-sky-600 border-sky-200"
+                                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-sky-600"
+                            }`}
                         >
                             <Bell size={20} />
+                            {notifications.length > 0 && (
+                                <span className="absolute -top-1 -right-1 w-3 h-3 bg-sky-500 rounded-full border-2 border-white"></span>
+                            )}
                         </button>
 
                         {isNotifOpen && (
-                            <div className="absolute right-0 top-14 mt-2 w-72 sm:w-80 bg-white/95 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-white overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
-                                <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 text-sky-600">
-                                        <Bell size={16} strokeWidth={2.5} />
+                            <div className="absolute right-0 top-14 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-white overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                                <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 text-sky-600">
+                                            <Bell size={16} strokeWidth={2.5} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                                                Log Aktivitas Terbaru
+                                            </h3>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                Pantauan Real-Time
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-sm font-black text-slate-900 tracking-tight">
-                                            Aktivitas Brankas
-                                        </h3>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                            0 Pesan Baru
-                                        </p>
-                                    </div>
+                                    <Link
+                                        href="/activity-logs"
+                                        onClick={() => setIsNotifOpen(false)}
+                                        className="text-[11px] font-extrabold text-sky-600 hover:underline"
+                                    >
+                                        Lihat Semua
+                                    </Link>
                                 </div>
-                                <div className="py-12 flex flex-col items-center justify-center text-center px-6 bg-white/50">
-                                    <Bell
-                                        size={24}
-                                        className="text-slate-300 mb-3"
-                                    />
-                                    <p className="text-sm font-black text-slate-700">
-                                        Belum Ada Notifikasi
-                                    </p>
-                                    <p className="text-[11px] font-medium text-slate-400 mt-1">
-                                        Brankas Anda aman dan tidak ada
-                                        aktivitas mencurigakan.
-                                    </p>
+
+                                <div className="max-h-80 overflow-y-auto divide-y divide-slate-100/80 p-2">
+                                    {notifications.length === 0 ? (
+                                        <div className="py-10 flex flex-col items-center justify-center text-center px-6">
+                                            <Bell
+                                                size={24}
+                                                className="text-slate-300 mb-2"
+                                            />
+                                            <p className="text-xs font-bold text-slate-600">
+                                                Belum Ada Aktivitas
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        notifications.map((item) => (
+                                            <Link
+                                                key={item.id}
+                                                href="/activity-logs"
+                                                onClick={() =>
+                                                    setIsNotifOpen(false)
+                                                }
+                                                className="p-3 rounded-2xl hover:bg-slate-50 transition flex items-start gap-3"
+                                            >
+                                                <div className="p-2 bg-white rounded-xl border border-slate-100 shadow-sm mt-0.5">
+                                                    {getNotifIcon(item.type)}
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-[11px] font-black text-slate-800 tracking-wider">
+                                                        {item.title}
+                                                    </p>
+                                                    <p className="text-xs font-medium text-slate-500 truncate mt-0.5">
+                                                        {item.message}
+                                                    </p>
+                                                    <p className="text-[10px] font-bold text-slate-400 mt-1">
+                                                        {new Date(
+                                                            item.created_at,
+                                                        ).toLocaleString(
+                                                            "id-ID",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "short",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            },
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -195,7 +278,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                                             size={14}
                                             className="text-emerald-500"
                                         />{" "}
-                                        Pemilik Utama
+                                        Pemilik Brankas
                                     </div>
                                 </div>
 
@@ -203,22 +286,19 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                                     <Link
                                         href="/profile"
                                         onClick={() => setProfileOpen(false)}
-                                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-slate-50 hover:shadow-sm border border-transparent hover:border-slate-100 text-slate-600 group font-black text-xs uppercase tracking-wider"
+                                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-slate-50 text-slate-600 group font-black text-xs uppercase tracking-wider"
                                     >
                                         <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-sky-100 text-slate-500 group-hover:text-sky-600 transition-colors">
                                             <UserCog size={16} />
                                         </div>
-                                        <span>Pengaturan</span>
+                                        <span>Pengaturan Akun</span>
                                     </Link>
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-rose-50 hover:shadow-sm border border-transparent hover:border-rose-100 text-rose-600 group font-black text-xs uppercase tracking-wider outline-none"
+                                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-rose-50 text-rose-600 group font-black text-xs uppercase tracking-wider outline-none"
                                     >
                                         <div className="p-1.5 rounded-lg bg-rose-100/50 group-hover:bg-rose-500 text-rose-500 group-hover:text-white transition-colors">
-                                            <LogOut
-                                                size={16}
-                                                className="group-hover:-translate-x-0.5 transition-transform"
-                                            />
+                                            <LogOut size={16} />
                                         </div>
                                         <span>Kunci Brankas</span>
                                     </button>

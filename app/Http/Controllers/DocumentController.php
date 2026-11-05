@@ -13,10 +13,26 @@ use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        $documents = $user->documents()->latest()->paginate(10);
+        $search = $request->query('search', '');
+        $category = $request->query('category', 'all');
+
+        $query = $user->documents()->latest();
+
+        if ($category !== 'all') {
+            $query->where('category', $category);
+        }
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('original_filename', 'like', '%' . $search . '%');
+            });
+        }
+
+        $documents = $query->paginate(10)->withQueryString();
 
         $totalCapacityBytes = $user->documents()->sum('file_size');
         $totalCapacityMB = round($totalCapacityBytes / 1024 / 1024, 2);
@@ -25,6 +41,10 @@ class DocumentController extends Controller
             'documents' => $documents,
             'totalCapacityMB' => $totalCapacityMB,
             'totalFiles' => $user->documents()->count(),
+            'filters' => [
+                'search' => $search,
+                'category' => $category,
+            ],
         ]);
     }
 
@@ -68,7 +88,6 @@ class DocumentController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        // Catat Log Aktivitas Upload & Enkripsi
         activity('vault')
             ->causedBy(auth()->user())
             ->performedOn($document)
@@ -103,7 +122,6 @@ class DocumentController extends Controller
         $oldTitle = $document->title;
         $document->update($validated);
 
-        // Catat Log Aktivitas Edit Metadata
         activity('vault')
             ->causedBy(auth()->user())
             ->performedOn($document)
@@ -133,7 +151,6 @@ class DocumentController extends Controller
         $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
         $decryptedContents = Crypt::decrypt($encryptedRaw);
 
-        // Catat Log Aktivitas Pratinjau (Dekripsi di Memori)
         activity('vault')
             ->causedBy(auth()->user())
             ->performedOn($document)
@@ -167,7 +184,6 @@ class DocumentController extends Controller
         $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
         $decryptedContents = Crypt::decrypt($encryptedRaw);
 
-        // Catat Log Aktivitas Unduh Dokumen
         activity('vault')
             ->causedBy(auth()->user())
             ->performedOn($document)
@@ -206,7 +222,6 @@ class DocumentController extends Controller
 
         $document->forceDelete();
 
-        // Catat Log Aktivitas Penghancuran Dokumen
         activity('vault')
             ->causedBy(auth()->user())
             ->event('deleted')
