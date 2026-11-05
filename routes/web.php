@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 // Halaman Depan / Landing Page Promosi SafeDoc
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome');
 });
 
 // Alur Setup & Verifikasi 2FA Authenticator
@@ -22,13 +23,15 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::get('/dashboard', [DocumentController::class, 'index'])->name('dashboard');
 
-    Route::resource('documents', DocumentController::class)->except(['show', 'edit', 'update']);
+    // Rute dokumen (fungsi 'update' sekarang dibuka agar EditModal berfungsi)
+    Route::resource('documents', DocumentController::class)->except(['show', 'edit']);
     Route::get('documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 
+    // Rute Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

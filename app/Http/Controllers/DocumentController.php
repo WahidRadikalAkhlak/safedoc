@@ -9,18 +9,23 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
     public function index()
     {
-        $documents = auth()->user()->documents()->latest()->paginate(10);
-        return view('documents.index', compact('documents'));
-    }
+        $user = auth()->user();
+        $documents = $user->documents()->latest()->paginate(10);
 
-    public function create()
-    {
-        return view('documents.create');
+        $totalCapacityBytes = $user->documents()->sum('file_size');
+        $totalCapacityMB = round($totalCapacityBytes / 1024 / 1024, 2);
+
+        return Inertia::render('Documents/Index', [
+            'documents' => $documents,
+            'totalCapacityMB' => $totalCapacityMB,
+            'totalFiles' => $user->documents()->count(),
+        ]);
     }
 
     public function store(Request $request)
@@ -30,13 +35,7 @@ class DocumentController extends Controller
             'category' => 'required|string|in:sertifikat_tanah,bpkb,wasiat,lainnya',
             'document_number' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:1000',
-            'document_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maksimal 5MB
-        ], [
-            'title.required' => 'Nama/keterangan dokumen wajib diisi.',
-            'category.required' => 'Pilih salah satu kategori dokumen.',
-            'document_file.required' => 'Silakan pilih berkas dokumen yang akan diunggah.',
-            'document_file.mimes' => 'Format file harus berupa PDF, JPG, JPEG, atau PNG.',
-            'document_file.max' => 'Ukuran file melebihi batas maksimal 5 MB.',
+            'document_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
         $file = $request->file('document_file');
@@ -66,16 +65,27 @@ class DocumentController extends Controller
         return redirect()->route('dashboard')->with('success', 'Dokumen berhasil dienkripsi dan disimpan di brankas!');
     }
 
-    // Menampilkan Pratinjau Dokumen di Tab Baru Browser
+    // Fungsi UPDATE untuk Edit Modal
+    public function update(Request $request, Document $document)
+    {
+        if ($document->user_id !== auth()->id()) abort(403, 'Akses Ditolak.');
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|in:sertifikat_tanah,bpkb,wasiat,lainnya',
+            'document_number' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $document->update($validated);
+
+        return redirect()->back()->with('success', 'Informasi dokumen berhasil diperbarui!');
+    }
+
     public function preview(Document $document): Response
     {
-        if ($document->user_id !== auth()->id()) {
-            abort(403, 'Akses Ditolak: Anda bukan pemilik sah berkas ini.');
-        }
-
-        if (!Storage::disk('local')->exists($document->encrypted_file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada vault server.');
-        }
+        if ($document->user_id !== auth()->id()) abort(403, 'Akses Ditolak.');
+        if (!Storage::disk('local')->exists($document->encrypted_file_path)) abort(404, 'File fisik tidak ditemukan.');
 
         $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
         $decryptedContents = Crypt::decrypt($encryptedRaw);
@@ -83,21 +93,13 @@ class DocumentController extends Controller
         return response($decryptedContents, 200, [
             'Content-Type' => $document->mime_type,
             'Content-Disposition' => 'inline; filename="' . $document->original_filename . '"',
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache',
         ]);
     }
 
-    // Mengunduh Dokumen Hasil Dekripsi
     public function download(Document $document): StreamedResponse
     {
-        if ($document->user_id !== auth()->id()) {
-            abort(403, 'Akses Ditolak: Anda bukan pemilik sah berkas ini.');
-        }
-
-        if (!Storage::disk('local')->exists($document->encrypted_file_path)) {
-            abort(404, 'File fisik tidak ditemukan pada vault server.');
-        }
+        if ($document->user_id !== auth()->id()) abort(403, 'Akses Ditolak.');
+        if (!Storage::disk('local')->exists($document->encrypted_file_path)) abort(404, 'File fisik tidak ditemukan.');
 
         $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
         $decryptedContents = Crypt::decrypt($encryptedRaw);
@@ -106,21 +108,15 @@ class DocumentController extends Controller
             echo $decryptedContents;
         }, $document->original_filename, [
             'Content-Type' => $document->mime_type,
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache',
         ]);
     }
 
     public function destroy(Document $document)
     {
-        if ($document->user_id !== auth()->id()) {
-            abort(403, 'Akses Ditolak.');
-        }
-
+        if ($document->user_id !== auth()->id()) abort(403, 'Akses Ditolak.');
         if (Storage::disk('local')->exists($document->encrypted_file_path)) {
             Storage::disk('local')->delete($document->encrypted_file_path);
         }
-
         $document->forceDelete();
 
         return redirect()->route('dashboard')->with('success', 'Dokumen berhasil dihapus permanen.');

@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth; // Namespace sudah disesuaikan ke folder Auth
 
+use App\Http\Controllers\Controller; // Tambahkan ini karena pindah folder
 use Illuminate\Http\Request;
 use PragmaRX\Google2FAQRCode\Google2FA;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TwoFactorController extends Controller
 {
-    // Menampilkan Barcode QR Code untuk di-scan
+    // Menampilkan Barcode QR Code untuk di-scan via Inertia
     public function setup()
     {
         $user = auth()->user();
@@ -36,7 +39,8 @@ class TwoFactorController extends Controller
         $writer = new Writer($renderer);
         $qrCodeSvg = base64_encode($writer->writeString($qrCodeUrl));
 
-        return view('auth.2fa-setup', [
+        // Ubah dari view() menjadi Inertia::render()
+        return Inertia::render('Auth/TwoFactorSetup', [
             'qrCodeSvg' => $qrCodeSvg,
             'secret' => $user->google2fa_secret,
         ]);
@@ -66,10 +70,11 @@ class TwoFactorController extends Controller
         return back()->withErrors(['code' => 'Kode OTP salah atau telah kadaluarsa. Silakan coba lagi.']);
     }
 
-    // Layar input 6-digit OTP saat login
+    // Layar input 6-digit OTP saat login via Inertia
     public function challenge()
     {
-        return view('auth.2fa-challenge');
+        // Ubah dari view() menjadi Inertia::render()
+        return Inertia::render('Auth/TwoFactorChallenge');
     }
 
     // Verifikasi kode saat login
