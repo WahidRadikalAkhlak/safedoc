@@ -5,12 +5,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 
-// Halaman Promosi SafeDoc
+// Halaman Depan / Landing Page Promosi SafeDoc
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Rute Autentikasi 2FA
+// Alur Setup & Verifikasi 2FA Authenticator
 Route::middleware(['auth'])->group(function () {
     Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('2fa.setup');
     Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
@@ -18,11 +18,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
 });
 
-// Area Terproteksi (Login + 2FA Verified)
+// Area Terproteksi Penuh (Wajib Login, Email Verified, dan 2FA Valid)
 Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::get('/dashboard', [DocumentController::class, 'index'])->name('dashboard');
 
     Route::resource('documents', DocumentController::class)->except(['show', 'edit', 'update']);
+    Route::get('documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

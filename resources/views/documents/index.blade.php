@@ -7,7 +7,6 @@
                 </h2>
                 <p class="text-sm text-slate-500 mt-1">Data Anda tersimpan dengan proteksi enkripsi AES-256 end-to-end.</p>
             </div>
-            <!-- Ganti kelas tombol lama dengan gradient SafeDoc -->
             <a href="{{ route('documents.create') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#0052CC] to-[#00A3FF] border border-transparent rounded-xl font-bold text-sm text-white shadow-lg shadow-sky-500/25 hover:brightness-110 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -20,7 +19,6 @@
     <div class="py-10 bg-slate-50/50 min-h-[calc(100vh-140px)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Flash Notification -->
             @if (session('success'))
                 <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-sm">
                     <div class="flex items-center gap-3">
@@ -32,7 +30,7 @@
                 </div>
             @endif
 
-            <!-- 3 Stat Widgets -->
+            <!-- Statistik Berkas -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
@@ -70,7 +68,7 @@
                 </div>
             </div>
 
-            <!-- Tabel Daftar Berkas -->
+            <!-- Tabel Dokumen -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 @if ($documents->isEmpty())
                     <div class="text-center py-16 px-4">
@@ -82,7 +80,7 @@
                         <h3 class="text-lg font-bold text-slate-900">Belum ada dokumen yang disimpan</h3>
                         <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Mulai amankan sertifikat tanah, BPKB, wasiat atau berkas privat Anda ke dalam brankas sekarang.</p>
                         <div class="mt-6">
-                            <a href="{{ route('documents.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-md transition">
+                            <a href="{{ route('documents.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#0052CC] to-[#00A3FF] text-white font-semibold text-sm rounded-xl shadow-md transition">
                                 + Simpan Dokumen Pertama
                             </a>
                         </div>
@@ -131,10 +129,22 @@
                                             {{ round($doc->file_size / 1024, 1) }} KB
                                         </td>
                                         <td class="py-4 px-6 text-right space-x-2">
+                                            <!-- Tombol Pratinjau (Lihat Dokumen di Browser) -->
+                                            <a href="{{ route('documents.preview', $doc) }}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 font-semibold text-xs transition">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                                Lihat
+                                            </a>
+
+                                            <!-- Tombol Download Dokumen -->
                                             <a href="{{ route('documents.download', $doc) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold text-xs transition">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                                 Unduh
                                             </a>
+
+                                            <!-- Tombol Hapus Dokumen -->
                                             <form action="{{ route('documents.destroy', $doc) }}" method="POST" class="inline" onsubmit="return confirm('Peringatan: Dokumen akan dihapus permanen dari server vault. Lanjutkan?')">
                                                 @csrf
                                                 @method('DELETE')

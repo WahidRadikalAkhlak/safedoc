@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class DocumentController extends Controller
 {
@@ -29,26 +30,27 @@ class DocumentController extends Controller
             'category' => 'required|string|in:sertifikat_tanah,bpkb,wasiat,lainnya',
             'document_number' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:1000',
-            'document_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // Max 10MB
+            'document_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maksimal 5MB
+        ], [
+            'title.required' => 'Nama/keterangan dokumen wajib diisi.',
+            'category.required' => 'Pilih salah satu kategori dokumen.',
+            'document_file.required' => 'Silakan pilih berkas dokumen yang akan diunggah.',
+            'document_file.mimes' => 'Format file harus berupa PDF, JPG, JPEG, atau PNG.',
+            'document_file.max' => 'Ukuran file melebihi batas maksimal 5 MB.',
         ]);
 
         $file = $request->file('document_file');
         $rawContents = file_get_contents($file->getRealPath());
 
-        // 1. Hitung SHA-256 Hash sebelum dienkripsi (Integritas Data)
         $fileHash = hash('sha256', $rawContents);
-
-        // 2. Enkripsi konten file secara penuh (AES-256-CBC bawaan Laravel Crypt)
         $encryptedContents = Crypt::encrypt($rawContents);
 
-        // 3. Simpan ke direktori terisolasi non-publik
         $vaultFolder = 'vault/' . auth()->id();
         $randomFileName = Str::uuid() . '.enc';
         $filePath = $vaultFolder . '/' . $randomFileName;
 
         Storage::disk('local')->put($filePath, $encryptedContents);
 
-        // 4. Catat Metadata ke Database
         auth()->user()->documents()->create([
             'title' => $validated['title'],
             'category' => $validated['category'],
@@ -61,19 +63,42 @@ class DocumentController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        return redirect()->route('documents.index')->with('success', 'Dokumen berhasil dienkripsi dan disimpan.');
+        return redirect()->route('dashboard')->with('success', 'Dokumen berhasil dienkripsi dan disimpan di brankas!');
     }
 
-    public function download(Document $document): StreamedResponse
+    // Menampilkan Pratinjau Dokumen di Tab Baru Browser
+    public function preview(Document $document): Response
     {
-        // Validasi kepemilikan file
-        $this->authorize('view', $document);
-
-        if (!Storage::disk('local')->exists($document->encrypted_file_path)) {
-            abort(404, 'File fisik tidak ditemukan.');
+        if ($document->user_id !== auth()->id()) {
+            abort(403, 'Akses Ditolak: Anda bukan pemilik sah berkas ini.');
         }
 
-        // Ambil data terenkripsi dan dekripsi on-the-fly
+        if (!Storage::disk('local')->exists($document->encrypted_file_path)) {
+            abort(404, 'File fisik tidak ditemukan pada vault server.');
+        }
+
+        $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
+        $decryptedContents = Crypt::decrypt($encryptedRaw);
+
+        return response($decryptedContents, 200, [
+            'Content-Type' => $document->mime_type,
+            'Content-Disposition' => 'inline; filename="' . $document->original_filename . '"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+        ]);
+    }
+
+    // Mengunduh Dokumen Hasil Dekripsi
+    public function download(Document $document): StreamedResponse
+    {
+        if ($document->user_id !== auth()->id()) {
+            abort(403, 'Akses Ditolak: Anda bukan pemilik sah berkas ini.');
+        }
+
+        if (!Storage::disk('local')->exists($document->encrypted_file_path)) {
+            abort(404, 'File fisik tidak ditemukan pada vault server.');
+        }
+
         $encryptedRaw = Storage::disk('local')->get($document->encrypted_file_path);
         $decryptedContents = Crypt::decrypt($encryptedRaw);
 
@@ -88,15 +113,16 @@ class DocumentController extends Controller
 
     public function destroy(Document $document)
     {
-        $this->authorize('delete', $document);
+        if ($document->user_id !== auth()->id()) {
+            abort(403, 'Akses Ditolak.');
+        }
 
-        // Hapus file fisik
         if (Storage::disk('local')->exists($document->encrypted_file_path)) {
             Storage::disk('local')->delete($document->encrypted_file_path);
         }
 
         $document->forceDelete();
 
-        return redirect()->route('documents.index')->with('success', 'Dokumen berhasil dihapus permanen.');
+        return redirect()->route('dashboard')->with('success', 'Dokumen berhasil dihapus permanen.');
     }
 }
