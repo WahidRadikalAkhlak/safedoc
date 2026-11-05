@@ -1,14 +1,13 @@
-import React from "react";
-import { usePage } from "@inertiajs/react";
+import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "../Components/Sidebar";
+import Header from "../Components/Header";
 
 export default function AuthenticatedLayout({ children }) {
-    const { auth } = usePage().props;
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans',sans-serif] flex">
-            {/* Komponen Toaster Global */}
+        <div className="min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans',sans-serif] flex overflow-hidden">
             <Toaster
                 position="top-right"
                 toastOptions={{
@@ -22,23 +21,30 @@ export default function AuthenticatedLayout({ children }) {
                 }}
             />
 
-            {/* Manggil Komponen Sidebar */}
-            <Sidebar />
+            {/* Sidebar Desktop & Mobile */}
+            <div
+                className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out`}
+            >
+                <Sidebar />
+            </div>
 
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Header Khusus Mobile (Muncul jika layar kecil saja) */}
-                <header className="md:hidden bg-white/80 backdrop-blur-xl border-b border-slate-200 h-16 flex items-center justify-between px-4 sticky top-0 z-30">
-                    <img
-                        src="/images/logo-safedoc.png"
-                        alt="SafeDoc"
-                        className="h-8 w-auto"
-                    />
-                    <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg">
-                        {auth?.user?.name}
-                    </span>
-                </header>
+            {/* Overlay untuk Mobile saat Sidebar terbuka */}
+            {sidebarOpen && (
+                <div
+                    onClick={() => setSidebarOpen(false)}
+                    className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
+                ></div>
+            )}
 
-                <main className="flex-1 overflow-x-hidden">{children}</main>
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+                <Header
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                />
+
+                <main className="flex-1 overflow-x-hidden overflow-y-auto custom-scrollbar">
+                    {children}
+                </main>
             </div>
         </div>
     );
