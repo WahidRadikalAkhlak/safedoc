@@ -2,6 +2,7 @@ import React from "react";
 import { Link, usePage } from "@inertiajs/react";
 import {
     FolderLock,
+    Users,
     ShieldCheck,
     Activity,
     UserCog,
@@ -13,10 +14,16 @@ export default function Sidebar() {
 
     const navItems = [
         {
-            name: "Semua Dokumen",
+            name: "Brankas Dokumen",
             href: "/dashboard",
             active: url === "/dashboard" || url.startsWith("/documents"),
             icon: FolderLock,
+        },
+        {
+            name: "Ahli Waris & Wasiat",
+            href: "/beneficiaries",
+            active: url.startsWith("/beneficiaries"),
+            icon: Users,
         },
         {
             name: "Pusat Keamanan",
@@ -52,7 +59,7 @@ export default function Sidebar() {
 
             <div className="p-4 flex-1 flex flex-col gap-2">
                 <p className="px-4 text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">
-                    Menu Brankas
+                    Menu Utama Vault
                 </p>
 
                 {navItems.map((item) => {

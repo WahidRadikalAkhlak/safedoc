@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityCenterController;
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::resource('documents', DocumentController::class)->except(['show', 'edit']);
     Route::get('documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+    // Rute Manajemen Ahli Waris & Alokasi Warisan
+    Route::resource('beneficiaries', BeneficiaryController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Rute Pusat Keamanan & Integritas
     Route::get('/security-center', [SecurityCenterController::class, 'index'])->name('security.index');
