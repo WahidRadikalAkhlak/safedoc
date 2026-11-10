@@ -5,6 +5,8 @@ use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityCenterController;
+use App\Http\Controllers\TestamentController;
+use App\Http\Controllers\VaultCredentialController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +35,12 @@ Route::middleware(['auth', 'verified', '2fa'])->group(function () {
 
     // Rute Manajemen Ahli Waris & Alokasi Warisan
     Route::resource('beneficiaries', BeneficiaryController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Rute Manajemen Kredensial, Polis & PIN Brankas
+    Route::resource('credentials', VaultCredentialController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Rute Manajemen Surat Wasiat, Amanat & Catatan Piutang/Kewajiban
+    Route::resource('testaments', TestamentController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Rute Pusat Keamanan & Integritas
     Route::get('/security-center', [SecurityCenterController::class, 'index'])->name('security.index');
