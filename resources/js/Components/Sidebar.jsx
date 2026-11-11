@@ -2,6 +2,9 @@ import React from "react";
 import { Link, usePage } from "@inertiajs/react";
 import {
     FolderLock,
+    Users,
+    KeyRound,
+    BookOpen,
     ShieldCheck,
     Activity,
     UserCog,
@@ -13,10 +16,28 @@ export default function Sidebar() {
 
     const navItems = [
         {
-            name: "Semua Dokumen",
+            name: "Brankas Dokumen",
             href: "/dashboard",
             active: url === "/dashboard" || url.startsWith("/documents"),
             icon: FolderLock,
+        },
+        {
+            name: "Ahli Waris & Alokasi",
+            href: "/beneficiaries",
+            active: url.startsWith("/beneficiaries"),
+            icon: Users,
+        },
+        {
+            name: "Kredensial & PIN",
+            href: "/credentials",
+            active: url.startsWith("/credentials"),
+            icon: KeyRound,
+        },
+        {
+            name: "Amanat & Wasiat",
+            href: "/testaments",
+            active: url.startsWith("/testaments"),
+            icon: BookOpen,
         },
         {
             name: "Pusat Keamanan",
@@ -50,9 +71,9 @@ export default function Sidebar() {
                 </Link>
             </div>
 
-            <div className="p-4 flex-1 flex flex-col gap-2">
-                <p className="px-4 text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">
-                    Menu Brankas
+            <div className="p-4 flex-1 flex flex-col gap-1.5 overflow-y-auto">
+                <p className="px-4 text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-2">
+                    Menu Utama Vault
                 </p>
 
                 {navItems.map((item) => {
@@ -61,13 +82,13 @@ export default function Sidebar() {
                         <Link
                             key={item.name}
                             href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 ${
+                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all duration-200 ${
                                 item.active
                                     ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-lg shadow-sky-500/30"
                                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                             }`}
                         >
-                            <Icon size={20} strokeWidth={2.5} />
+                            <Icon size={19} strokeWidth={2.5} />
                             {item.name}
                         </Link>
                     );
