@@ -1,9 +1,9 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import GuestLayout from "../../Layouts/GuestLayout";
+import { MailCheck, Send, LogOut } from "lucide-react";
 
 export default function VerifyEmail({ status }) {
-    const { post, processing } = useForm();
+    const { post, processing } = useForm({});
 
     const submit = (e) => {
         e.preventDefault();
@@ -11,64 +11,56 @@ export default function VerifyEmail({ status }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Verifikasi Email" />
+        <div className="min-h-screen bg-slate-950 font-['Plus_Jakarta_Sans',sans-serif] flex items-center justify-center p-4 sm:p-6">
+            <Head title="Verifikasi Alamat Email" />
 
-            <div className="mb-6 text-center">
-                <div className="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                    </svg>
+            <div className="w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.55)] overflow-hidden border border-white/80">
+                <div className="p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white text-center space-y-3">
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-sky-500/20 border border-sky-400/30 text-sky-300 flex items-center justify-center">
+                        <MailCheck size={28} />
+                    </div>
+                    <h1 className="text-2xl font-black tracking-tight">
+                        Verifikasi Email Pemilik Brankas
+                    </h1>
+                    <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                        Silakan klik tautan verifikasi yang baru saja kami
+                        kirimkan ke kotak masuk email Anda.
+                    </p>
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">
-                    Cek Email Anda
-                </h2>
-                <p className="text-sm text-slate-500 mt-2 leading-relaxed">
-                    Terima kasih telah mendaftar! Sebelum mulai, bisakah Anda
-                    memverifikasi alamat email Anda dengan mengeklik tautan yang
-                    baru saja kami kirimkan?
-                </p>
+
+                <div className="p-8 space-y-5 bg-white">
+                    {status === "verification-link-sent" && (
+                        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700">
+                            Tautan verifikasi baru telah berhasil dikirim ke
+                            alamat email Anda.
+                        </div>
+                    )}
+
+                    <form onSubmit={submit} className="space-y-4">
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
+                        >
+                            <Send size={16} />
+                            {processing
+                                ? "Mengirim Ulang..."
+                                : "Kirim Ulang Email Verifikasi"}
+                        </button>
+                    </form>
+
+                    <div className="pt-4 border-t border-slate-100 text-center">
+                        <Link
+                            href="/logout"
+                            method="post"
+                            as="button"
+                            className="inline-flex items-center gap-1.5 text-xs font-extrabold text-rose-600 hover:underline"
+                        >
+                            <LogOut size={14} /> Keluar dari Sesi
+                        </Link>
+                    </div>
+                </div>
             </div>
-
-            {status === "verification-link-sent" && (
-                <div className="mb-4 font-medium text-sm text-green-600 text-center bg-green-50 p-3 rounded-xl border border-green-100">
-                    Tautan verifikasi baru telah dikirim ke alamat email yang
-                    Anda berikan saat pendaftaran.
-                </div>
-            )}
-
-            <form onSubmit={submit} className="mt-6 space-y-4">
-                <button
-                    type="submit"
-                    disabled={processing}
-                    className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/30 transform transition hover:-translate-y-0.5 disabled:opacity-50"
-                >
-                    {processing
-                        ? "Mengirim ulang..."
-                        : "Kirim Ulang Email Verifikasi"}
-                </button>
-
-                <div className="text-center pt-2">
-                    <Link
-                        href="/logout"
-                        method="post"
-                        as="button"
-                        className="text-sm text-slate-500 hover:text-slate-700 underline transition"
-                    >
-                        Keluar Akun (Log Out)
-                    </Link>
-                </div>
-            </form>
-        </GuestLayout>
+        </div>
     );
 }

@@ -50,192 +50,202 @@ export default function EditModal({
         put(`/credentials/${credential.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success("Kredensial berhasil diperbarui!");
+                toast.success("Data rekening & PIN berhasil diperbarui!");
                 closeModal();
             },
             onError: () => {
-                toast.error("Gagal memperbarui kredensial.");
+                toast.error("Gagal memperbarui data.");
             },
             onFinish: () => setIsSubmitting(false),
         });
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/70 backdrop-blur-md transition-all duration-300">
-            <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] w-full max-w-2xl overflow-hidden border border-white/50 flex flex-col max-h-[95vh] animate-in zoom-in-95 fade-in duration-300">
-                <div className="flex justify-between items-center p-6 md:p-8 border-b border-slate-100 bg-amber-50/30 shrink-0">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/75 backdrop-blur-md transition-all duration-300">
+            <div className="bg-white rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.65)] w-full max-w-3xl overflow-hidden border border-white/60 flex flex-col max-h-[92vh] animate-in zoom-in-95 fade-in duration-300">
+                <div className="flex justify-between items-center p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white shrink-0">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-2xl shadow-lg">
+                        <div className="p-3.5 bg-amber-500/20 border border-amber-400/30 text-amber-300 rounded-2xl">
                             <Edit3 size={24} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800 tracking-tight">
-                                Edit Kredensial & PIN
+                            <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 block">
+                                Perbarui Data Rahasia
+                            </span>
+                            <h2 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
+                                Ubah Rincian Rekening, Polis & PIN
                             </h2>
-                            <p className="text-sm font-medium text-slate-500 mt-0.5">
-                                Perbarui rincian akses atau penerima waris.
-                            </p>
                         </div>
                     </div>
                     <button
                         onClick={closeModal}
-                        className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition"
+                        className="p-2.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition"
                     >
-                        <X size={20} strokeWidth={2.5} />
+                        <X size={22} strokeWidth={2.5} />
                     </button>
                 </div>
 
-                <div className="p-6 md:p-8 overflow-y-auto bg-slate-50/30 flex-1">
+                <div className="p-6 sm:p-8 overflow-y-auto bg-slate-50/40 flex-1">
                     <form
                         id="editCredentialForm"
                         onSubmit={submit}
-                        className="space-y-5"
+                        className="space-y-6"
                     >
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                Nama Akun / Brankas / Polis{" "}
-                                <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={data.title}
-                                onChange={(e) =>
-                                    setData("title", e.target.value)
-                                }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition"
-                                required
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
                             <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Kategori Kredensial
-                                </label>
-                                <select
-                                    value={data.category}
-                                    onChange={(e) =>
-                                        setData("category", e.target.value)
-                                    }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none cursor-pointer"
-                                >
-                                    <option value="rekening_bank">
-                                        Rekening Bank / Deposito
-                                    </option>
-                                    <option value="polis_asuransi">
-                                        Polis Asuransi Jiwa / Kesehatan
-                                    </option>
-                                    <option value="brankas_fisik">
-                                        Brankas Fisik / Safe Deposit Box
-                                    </option>
-                                    <option value="investasi">
-                                        Akun Saham / Kripto / Emas
-                                    </option>
-                                    <option value="akun_digital">
-                                        Akun Digital / Email Master
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Diwariskan Kepada
-                                </label>
-                                <select
-                                    value={data.beneficiary_id}
-                                    onChange={(e) =>
-                                        setData(
-                                            "beneficiary_id",
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none cursor-pointer"
-                                >
-                                    <option value="">
-                                        -- Seluruh Keluarga / Umum --
-                                    </option>
-                                    {beneficiaries.map((b) => (
-                                        <option key={b.id} value={b.id}>
-                                            {b.name} (
-                                            {b.relationship.replace("_", "/")})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Nama Institusi / Lokasi
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.institution_name}
-                                    onChange={(e) =>
-                                        setData(
-                                            "institution_name",
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Nomor Rekening / Polis / Username{" "}
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Nama Tabungan / Polis Asuransi / Brankas{" "}
                                     <span className="text-rose-500">*</span>
                                 </label>
                                 <input
                                     type="text"
-                                    value={data.account_identifier}
+                                    value={data.title}
                                     onChange={(e) =>
-                                        setData(
-                                            "account_identifier",
-                                            e.target.value,
-                                        )
+                                        setData("title", e.target.value)
                                     }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-mono font-bold text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-800 focus:bg-white focus:border-amber-500 outline-none transition"
                                     required
                                 />
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Jenis Data Rahasia
+                                    </label>
+                                    <select
+                                        value={data.category}
+                                        onChange={(e) =>
+                                            setData("category", e.target.value)
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-700 focus:bg-white focus:border-amber-500 outline-none cursor-pointer"
+                                    >
+                                        <option value="rekening_bank">
+                                            Rekening Bank / Deposito
+                                        </option>
+                                        <option value="polis_asuransi">
+                                            Polis Asuransi Jiwa / Kesehatan
+                                        </option>
+                                        <option value="brankas_fisik">
+                                            Kunci Brankas Besi / SDB Bank
+                                        </option>
+                                        <option value="investasi">
+                                            Akun Investasi / Saham / Emas
+                                        </option>
+                                        <option value="akun_digital">
+                                            Akun Penting Lainnya
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Diwariskan / Dikuasakan Kepada Siapa?
+                                    </label>
+                                    <select
+                                        value={data.beneficiary_id}
+                                        onChange={(e) =>
+                                            setData(
+                                                "beneficiary_id",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-700 focus:bg-white focus:border-amber-500 outline-none cursor-pointer"
+                                    >
+                                        <option value="">
+                                            -- Untuk Seluruh Keluarga --
+                                        </option>
+                                        {beneficiaries.map((b) => (
+                                            <option key={b.id} value={b.id}>
+                                                {b.name} (
+                                                {b.relationship.replace(
+                                                    "_",
+                                                    "/",
+                                                )}
+                                                )
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                PIN Rahasia / Password / Kombinasi Kunci{" "}
-                                <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={data.secret_pin_or_password}
-                                onChange={(e) =>
-                                    setData(
-                                        "secret_pin_or_password",
-                                        e.target.value,
-                                    )
-                                }
-                                className="w-full bg-amber-50/40 border border-amber-200 rounded-2xl py-3.5 px-4 font-mono font-bold text-slate-800 focus:bg-white focus:border-amber-500 outline-none transition"
-                                required
-                            />
-                        </div>
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Nama Bank / Perusahaan Asuransi / Lokasi
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.institution_name}
+                                        onChange={(e) =>
+                                            setData(
+                                                "institution_name",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition"
+                                    />
+                                </div>
 
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                Panduan Akses / Letak Kunci Fisik
-                            </label>
-                            <textarea
-                                rows="3"
-                                value={data.access_instructions}
-                                onChange={(e) =>
-                                    setData(
-                                        "access_instructions",
-                                        e.target.value,
-                                    )
-                                }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition"
-                            />
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Nomor Rekening / Nomor Polis / ID Akun{" "}
+                                        <span className="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.account_identifier}
+                                        onChange={(e) =>
+                                            setData(
+                                                "account_identifier",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-mono font-bold text-slate-800 focus:bg-white focus:border-amber-500 outline-none transition"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-extrabold text-amber-800 mb-2">
+                                    Kode PIN / Kata Sandi / Angka Kombinasi
+                                    Brankas{" "}
+                                    <span className="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.secret_pin_or_password}
+                                    onChange={(e) =>
+                                        setData(
+                                            "secret_pin_or_password",
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full bg-amber-50/50 border border-amber-200 rounded-2xl py-3.5 px-4 font-mono font-black text-slate-900 focus:bg-white focus:border-amber-500 outline-none transition"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Petunjuk Pencairan / Letak Buku Tabungan &
+                                    Kunci Cadangan
+                                </label>
+                                <textarea
+                                    rows="3"
+                                    value={data.access_instructions}
+                                    onChange={(e) =>
+                                        setData(
+                                            "access_instructions",
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-medium text-slate-700 focus:bg-white focus:border-amber-500 outline-none transition leading-relaxed"
+                                />
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -244,15 +254,15 @@ export default function EditModal({
                     <button
                         type="button"
                         onClick={closeModal}
-                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition"
+                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm transition"
                     >
-                        Batalkan
+                        Batal
                     </button>
                     <button
                         type="submit"
                         form="editCredentialForm"
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 px-8 py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
+                        className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
                     >
                         <CheckCircle2 size={18} strokeWidth={2.5} />
                         {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}

@@ -15,9 +15,17 @@ class BeneficiaryController extends Controller
         $search = $request->query('search', '');
 
         $query = Beneficiary::where('user_id', $user->id)
-            ->with(['documents' => function ($q) {
-                $q->select('id', 'beneficiary_id', 'title', 'category', 'estimated_value', 'asset_location', 'original_filename');
-            }])
+            ->with([
+                'documents' => function ($q) {
+                    $q->select('id', 'beneficiary_id', 'title', 'category', 'estimated_value', 'asset_location', 'original_filename');
+                },
+                'credentials' => function ($q) {
+                    $q->select('id', 'beneficiary_id', 'title', 'category', 'institution_name');
+                },
+                'testaments' => function ($q) {
+                    $q->select('id', 'beneficiary_id', 'title', 'category', 'nominal_amount', 'status');
+                },
+            ])
             ->latest();
 
         if (!empty($search)) {
@@ -25,6 +33,9 @@ class BeneficiaryController extends Controller
         }
 
         $beneficiaries = $query->get()->map(function ($person) {
+            $docValue = $person->documents->sum('estimated_value');
+            $receivableValue = $person->testaments->where('category', 'piutang_klaim')->sum('nominal_amount');
+
             return [
                 'id' => $person->id,
                 'name' => $person->name,
@@ -34,8 +45,12 @@ class BeneficiaryController extends Controller
                 'email' => $person->email,
                 'allocation_notes' => $person->Allocation_notes,
                 'documents_count' => $person->documents->count(),
-                'total_allocated_value' => $person->documents->sum('estimated_value'),
+                'credentials_count' => $person->credentials->count(),
+                'testaments_count' => $person->testaments->count(),
+                'total_allocated_value' => $docValue + $receivableValue,
                 'documents' => $person->documents,
+                'credentials' => $person->credentials,
+                'testaments' => $person->testaments,
                 'created_at' => $person->created_at,
             ];
         });
@@ -68,8 +83,8 @@ class BeneficiaryController extends Controller
             'email' => 'nullable|email|max:255',
             'allocation_notes' => 'nullable|string|max:2000',
         ], [
-            'name.required' => 'Nama lengkap ahli waris wajib diisi.',
-            'relationship.required' => 'Pilih hubungan keluarga/status.',
+            'name.required' => 'Nama lengkap anggota keluarga/ahli waris wajib diisi.',
+            'relationship.required' => 'Pilih hubungan keluarga.',
         ]);
 
         $beneficiary = Beneficiary::create([
@@ -92,9 +107,9 @@ class BeneficiaryController extends Controller
                 'beneficiary_name' => $beneficiary->name,
                 'relationship' => $beneficiary->relationship,
             ])
-            ->log("Menambahkan data ahli waris baru: {$beneficiary->name}");
+            ->log("Menambahkan anggota keluarga/ahli waris: {$beneficiary->name}");
 
-        return redirect()->back()->with('success', 'Data ahli waris berhasil didaftarkan ke dalam brankas!');
+        return redirect()->back()->with('success', 'Data anggota keluarga/ahli waris berhasil disimpan!');
     }
 
     public function update(Request $request, Beneficiary $beneficiary)

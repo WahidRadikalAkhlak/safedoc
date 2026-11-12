@@ -16,6 +16,7 @@ import {
     Search,
     Globe,
     Monitor,
+    ShieldCheck,
 } from "lucide-react";
 
 export default function Index({ logs, filters, stats }) {
@@ -40,69 +41,71 @@ export default function Index({ logs, filters, stats }) {
         );
     };
 
-    // Helper untuk mendeteksi nama Browser & OS secara ringkas dari User-Agent
     const parseUserAgent = (ua) => {
         if (!ua) return "Perangkat Tidak Dikenal";
         let browser = "Browser";
-        let os = "OS";
+        let os = "Perangkat";
 
-        if (ua.includes("Edg/")) browser = "Edge";
-        else if (ua.includes("Chrome/")) browser = "Chrome";
-        else if (ua.includes("Firefox/")) browser = "Firefox";
+        if (ua.includes("Edg/")) browser = "Microsoft Edge";
+        else if (ua.includes("Chrome/")) browser = "Google Chrome";
+        else if (ua.includes("Firefox/")) browser = "Mozilla Firefox";
         else if (ua.includes("Safari/") && !ua.includes("Chrome/"))
-            browser = "Safari";
+            browser = "Apple Safari";
 
-        if (ua.includes("Windows")) os = "Windows";
+        if (ua.includes("Windows")) os = "Laptop/PC Windows";
         else if (ua.includes("Macintosh") || ua.includes("Mac OS"))
-            os = "macOS";
-        else if (ua.includes("Android")) os = "Android";
-        else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
-        else if (ua.includes("Linux")) os = "Linux";
+            os = "MacBook / Mac";
+        else if (ua.includes("Android")) os = "HP Android";
+        else if (ua.includes("iPhone") || ua.includes("iPad"))
+            os = "iPhone / iPad";
+        else if (ua.includes("Linux")) os = "PC Linux";
 
         return `${browser} • ${os}`;
     };
 
-    // Helper untuk menentukan warna badge dan ikon berdasarkan event
     const getEventStyle = (event) => {
         switch (event) {
             case "uploaded":
+            case "beneficiary_added":
                 return {
-                    label: "ENKRIPSI BARU",
+                    label: "SIMPAN DATA BARU",
                     badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
                     iconBg: "bg-emerald-100 text-emerald-600",
                     Icon: UploadCloud,
                 };
             case "downloaded":
                 return {
-                    label: "UNDUH BERKAS",
+                    label: "UNDUH DOKUMEN",
                     badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
                     iconBg: "bg-indigo-100 text-indigo-600",
                     Icon: Download,
                 };
             case "previewed":
                 return {
-                    label: "LIHAT BERKAS",
+                    label: "LIHAT DOKUMEN",
                     badge: "bg-sky-50 text-sky-700 border-sky-200",
                     iconBg: "bg-sky-100 text-sky-600",
                     Icon: Eye,
                 };
             case "updated":
+            case "beneficiary_updated":
                 return {
-                    label: "EDIT METADATA",
+                    label: "UBAH DATA",
                     badge: "bg-amber-50 text-amber-700 border-amber-200",
                     iconBg: "bg-amber-100 text-amber-600",
                     Icon: Edit3,
                 };
             case "deleted":
+            case "beneficiary_deleted":
                 return {
-                    label: "DIHANCURKAN",
+                    label: "HAPUS DATA",
                     badge: "bg-rose-50 text-rose-700 border-rose-200",
                     iconBg: "bg-rose-100 text-rose-600",
                     Icon: Trash2,
                 };
             case "2fa_failed":
                 return {
-                    label: "2FA GAGAL",
+                    label: "SALAH KODE OTP",
                     badge: "bg-rose-100 text-rose-800 border-rose-300 animate-pulse",
                     iconBg: "bg-rose-500 text-white",
                     Icon: ShieldAlert,
@@ -110,14 +113,14 @@ export default function Index({ logs, filters, stats }) {
             case "2fa_verified":
             case "2fa_enabled":
                 return {
-                    label: "2FA TERVERIFIKASI",
+                    label: "LOLOS KODE OTP",
                     badge: "bg-teal-50 text-teal-700 border-teal-200",
                     iconBg: "bg-teal-100 text-teal-600",
                     Icon: KeyRound,
                 };
             case "login":
                 return {
-                    label: "SESI MASUK",
+                    label: "MASUK AKUN",
                     badge: "bg-blue-50 text-blue-700 border-blue-200",
                     iconBg: "bg-blue-100 text-blue-600",
                     Icon: LogIn,
@@ -131,7 +134,7 @@ export default function Index({ logs, filters, stats }) {
                 };
             default:
                 return {
-                    label: (event || "SISTEM").toUpperCase(),
+                    label: "AKTIVITAS BRANKAS",
                     badge: "bg-slate-100 text-slate-600 border-slate-200",
                     iconBg: "bg-slate-100 text-slate-600",
                     Icon: Activity,
@@ -141,7 +144,7 @@ export default function Index({ logs, filters, stats }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Riwayat Aktivitas & Audit" />
+            <Head title="Catatan Riwayat Akses Brankas" />
 
             <DetailModal
                 isOpen={!!selectedLog}
@@ -149,56 +152,60 @@ export default function Index({ logs, filters, stats }) {
                 log={selectedLog}
             />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
                 {/* Header Halaman */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-7 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
                     <div>
                         <h2 className="font-extrabold text-2xl text-slate-900 leading-tight">
-                            Riwayat Aktivitas & Audit Trail
+                            Catatan Riwayat Akses Brankas
                         </h2>
                         <p className="text-sm font-medium text-slate-500 mt-1">
-                            Rekam jejak komprehensif setiap akses dokumen,
-                            enkripsi, dan autentikasi 2FA.
+                            Pantau secara transparan kapan saja brankas dibuka,
+                            dokumen apa yang dilihat, dan perangkat apa yang
+                            digunakan.
                         </p>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-extrabold tracking-wider uppercase shadow-sm">
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        Live Audit Aktif
-                    </div>
+                    <Link
+                        href="/security-center"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-extrabold tracking-wider uppercase shadow-sm transition shrink-0"
+                    >
+                        <ShieldCheck size={16} className="text-emerald-400" />
+                        Cek Keaslian Berkas
+                    </Link>
                 </div>
 
-                {/* Kartu Statistik Keamanan */}
+                {/* 3 Kartu Statistik */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Total Jejak terekam
+                            Semua Aktivitas Tercatat
                         </span>
-                        <h4 className="text-4xl font-black text-slate-800 mt-2">
+                        <h4 className="text-3xl font-black text-slate-800 mt-2">
                             {stats.totalLogs}{" "}
                             <span className="text-sm font-bold text-slate-400">
-                                Aktivitas
+                                Kejadian
                             </span>
                         </h4>
                     </div>
 
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Dekripsi & Akses Berkas
+                            Dokumen Dibuka / Diunduh
                         </span>
-                        <h4 className="text-4xl font-black text-sky-600 mt-2">
+                        <h4 className="text-3xl font-black text-sky-600 mt-2">
                             {stats.vaultAccessCount}{" "}
                             <span className="text-sm font-bold text-slate-400">
-                                Kali Dibuka
+                                Kali
                             </span>
                         </h4>
                     </div>
 
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Aksi Kritis / Gagal 2FA
+                            Peringatan Penting / Gagal OTP
                         </span>
                         <h4
-                            className={`text-4xl font-black mt-2 ${stats.criticalAlertsCount > 0 ? "text-rose-600" : "text-emerald-600"}`}
+                            className={`text-3xl font-black mt-2 ${stats.criticalAlertsCount > 0 ? "text-rose-600" : "text-emerald-600"}`}
                         >
                             {stats.criticalAlertsCount}{" "}
                             <span className="text-sm font-bold text-slate-400">
@@ -212,10 +219,13 @@ export default function Index({ logs, filters, stats }) {
                 <div className="bg-white p-4 sm:p-5 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
                         {[
-                            { key: "all", label: "Semua Log" },
-                            { key: "vault", label: "Akses Dokumen" },
-                            { key: "security", label: "Keamanan & 2FA" },
-                            { key: "critical", label: "Peringatan Kritis" },
+                            { key: "all", label: "Semua Riwayat" },
+                            {
+                                key: "vault",
+                                label: "Aktivitas Dokumen & Harta",
+                            },
+                            { key: "security", label: "Riwayat Masuk & OTP" },
+                            { key: "critical", label: "Peringatan Penting" },
                         ].map((tab) => (
                             <button
                                 key={tab.key}
@@ -239,7 +249,7 @@ export default function Index({ logs, filters, stats }) {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Cari aktivitas atau dokumen..."
+                            placeholder="Cari nama berkas atau aktivitas..."
                             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 outline-none transition"
                         />
                         <Search
@@ -249,19 +259,19 @@ export default function Index({ logs, filters, stats }) {
                     </form>
                 </div>
 
-                {/* Daftar Tabel Log Aktivitas */}
-                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                {/* Tabel Riwayat */}
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                     {logs.data.length === 0 ? (
                         <div className="text-center py-20 px-4">
                             <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
                                 <Activity size={32} />
                             </div>
                             <h3 className="text-lg font-black text-slate-800">
-                                Belum Ada Riwayat Tercatat
+                                Belum Ada Riwayat pada Kategori Ini
                             </h3>
                             <p className="text-sm font-medium text-slate-500 mt-1">
                                 Setiap aktivitas di dalam brankas akan otomatis
-                                terekam di halaman ini.
+                                dicatat di halaman ini.
                             </p>
                         </div>
                     ) : (
@@ -270,17 +280,19 @@ export default function Index({ logs, filters, stats }) {
                                 <thead>
                                     <tr className="bg-slate-50/60 border-b border-slate-100 text-[11px] font-black uppercase tracking-widest text-slate-400">
                                         <th className="py-4 px-6">
-                                            Tipe Kejadian
+                                            Jenis Aktivitas
                                         </th>
                                         <th className="py-4 px-6">
-                                            Rincian Aktivitas
+                                            Keterangan Lengkap
                                         </th>
                                         <th className="py-4 px-6">
-                                            Alamat IP & Perangkat
+                                            Perangkat yang Digunakan
                                         </th>
-                                        <th className="py-4 px-6">Waktu</th>
+                                        <th className="py-4 px-6">
+                                            Waktu Kejadian
+                                        </th>
                                         <th className="py-4 px-6 text-right">
-                                            Inspeksi
+                                            Rincian
                                         </th>
                                     </tr>
                                 </thead>
@@ -320,7 +332,7 @@ export default function Index({ logs, filters, stats }) {
                                                     </span>
                                                     {props.original_filename && (
                                                         <span className="text-xs font-medium text-slate-400 block">
-                                                            File:{" "}
+                                                            Nama File:{" "}
                                                             {
                                                                 props.original_filename
                                                             }
@@ -328,19 +340,20 @@ export default function Index({ logs, filters, stats }) {
                                                     )}
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <div className="flex items-center gap-1.5 font-mono text-xs text-slate-600">
-                                                        <Globe
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                                                        <Monitor
                                                             size={13}
                                                             className="text-sky-500"
                                                         />
-                                                        {props.ip ||
-                                                            "127.0.0.1"}
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
-                                                        <Monitor size={12} />
                                                         {parseUserAgent(
                                                             props.user_agent,
                                                         )}
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-400 mt-0.5">
+                                                        <Globe size={11} />
+                                                        IP:{" "}
+                                                        {props.ip ||
+                                                            "127.0.0.1"}
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 text-xs text-slate-500">
@@ -359,9 +372,9 @@ export default function Index({ logs, filters, stats }) {
                                                         onClick={() =>
                                                             setSelectedLog(log)
                                                         }
-                                                        className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-sky-50 text-slate-600 hover:text-sky-600 text-xs font-bold transition"
+                                                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-sky-600 text-xs font-extrabold transition"
                                                     >
-                                                        Detail
+                                                        Lihat Bukti
                                                     </button>
                                                 </td>
                                             </tr>

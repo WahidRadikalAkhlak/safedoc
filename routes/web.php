@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EstateSummaryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityCenterController;
 use App\Http\Controllers\TestamentController;
@@ -27,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
 // Area Terproteksi Penuh (Wajib Login, Email Verified, dan 2FA Valid)
 Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::get('/dashboard', [DocumentController::class, 'index'])->name('dashboard');
+
+    // Rute Ikhtisar Eksekutif & Surat Induk Warisan
+    Route::get('/estate-summary', [EstateSummaryController::class, 'index'])->name('estate.summary');
 
     // Rute Dokumen Brankas
     Route::resource('documents', DocumentController::class)->except(['show', 'edit']);

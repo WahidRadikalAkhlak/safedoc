@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "react-hot-toast";
+import { Trash2, AlertTriangle, X } from "lucide-react";
 
 export default function DeleteModal({ isOpen, onClose, document }) {
     const { delete: destroy } = useForm();
@@ -15,7 +16,7 @@ export default function DeleteModal({ isOpen, onClose, document }) {
         destroy(`/documents/${document.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success("Dokumen telah dihancurkan dari Vault!");
+                toast.success("Dokumen berhasil dihapus dari brankas.");
                 onClose();
             },
             onError: () => {
@@ -26,116 +27,74 @@ export default function DeleteModal({ isOpen, onClose, document }) {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/70 backdrop-blur-md transition-all duration-300">
-            <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] w-full max-w-lg overflow-hidden border border-white/50 flex flex-col animate-in zoom-in-95 fade-in duration-300">
-                {/* Header Kritis */}
-                <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-rose-50/50 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                    <div className="flex items-center gap-4 relative z-10">
-                        <div className="p-3 bg-gradient-to-br from-rose-500 to-red-600 text-white rounded-2xl shadow-[0_8px_16px_rgba(225,29,72,0.2)] animate-pulse">
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2.5"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                            </svg>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/75 backdrop-blur-md transition-all duration-300">
+            <div className="bg-white rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.65)] w-full max-w-xl overflow-hidden border border-white/60 flex flex-col animate-in zoom-in-95 fade-in duration-300">
+                <div className="flex justify-between items-center p-6 sm:p-7 border-b border-slate-100 bg-gradient-to-r from-rose-950 to-slate-900 text-white">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-rose-500/20 border border-rose-400/30 text-rose-300 rounded-2xl">
+                            <Trash2 size={24} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-rose-700 tracking-tight">
-                                Hapus Dokumen
+                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-300 block">
+                                Konfirmasi Penghapusan Berkas
+                            </span>
+                            <h2 className="text-xl font-black tracking-tight mt-0.5">
+                                Hapus Dokumen dari Brankas?
                             </h2>
-                            <p className="text-sm font-medium text-rose-500/80 mt-0.5">
-                                Tindakan ini bersifat permanen.
-                            </p>
                         </div>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="p-2 text-slate-300 hover:text-white rounded-xl"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className="p-6 sm:p-8 space-y-5 bg-slate-50/40">
+                    <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                        Anda akan menghapus berkas dokumen berikut secara
+                        permanen dari lemari brankas digital:
+                    </p>
+                    <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm">
+                        <span className="text-xs font-bold text-slate-400 block">
+                            Nama Dokumen:
+                        </span>
+                        <span className="font-black text-lg text-slate-900 block mt-0.5">
+                            {document.title}
+                        </span>
+                        <span className="text-xs font-medium text-slate-400 block mt-1">
+                            File: {document.original_filename}
+                        </span>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200/80 flex items-start gap-3 text-xs font-semibold text-rose-800 leading-relaxed">
+                        <AlertTriangle
+                            size={18}
+                            className="text-rose-600 shrink-0 mt-0.5"
+                        />
+                        <span>
+                            Perhatian: Berkas yang sudah dihapus tidak dapat
+                            dikembalikan lagi. Pastikan Anda masih menyimpan
+                            salinan fisiknya.
+                        </span>
                     </div>
                 </div>
 
-                {/* Body Pesan Konfirmasi */}
-                <div className="p-6 sm:p-8 bg-slate-50/30 text-center relative">
-                    <p className="text-slate-600 font-medium leading-relaxed">
-                        Anda yakin ingin menghancurkan file terenkripsi dari{" "}
-                        <br />
-                        <strong className="text-slate-900 font-black text-lg block mt-2 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                            "{document.title}"
-                        </strong>
-                    </p>
-                    <p className="text-xs font-bold text-rose-500 mt-4 flex items-center justify-center gap-1.5 bg-rose-50 py-2 rounded-lg border border-rose-100">
-                        <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                            />
-                        </svg>
-                        File fisik dan data enkripsi akan terhapus dari server.
-                    </p>
-                </div>
-
-                {/* Footer Modal */}
                 <div className="p-6 border-t border-slate-100 bg-white flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all"
+                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm transition"
                     >
-                        Batalkan
+                        Batal
                     </button>
                     <button
                         type="button"
                         onClick={handleDelete}
                         disabled={isSubmitting}
-                        className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold text-white transition-all duration-300 ${isSubmitting ? "bg-slate-400 cursor-not-allowed shadow-none" : "bg-gradient-to-r from-rose-500 to-red-600 hover:brightness-110 shadow-[0_8px_16px_rgba(225,29,72,0.25)] hover:shadow-[0_8px_20px_rgba(225,29,72,0.4)] hover:-translate-y-0.5"}`}
+                        className="px-7 py-3 rounded-2xl font-black text-white bg-gradient-to-r from-rose-600 to-red-600 hover:brightness-110 shadow-lg text-sm transition disabled:opacity-50"
                     >
-                        {isSubmitting ? (
-                            <svg
-                                className="w-5 h-5 animate-spin"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                        ) : (
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2.5"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                            </svg>
-                        )}
-                        {isSubmitting ? "Menghapus..." : "Ya, Hancurkan!"}
+                        {isSubmitting ? "Menghapus..." : "Ya, Hapus Berkas Ini"}
                     </button>
                 </div>
             </div>

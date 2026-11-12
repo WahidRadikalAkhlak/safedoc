@@ -14,6 +14,7 @@ class TestamentController extends Controller
     {
         $user = auth()->user();
         $category = $request->query('category', 'all');
+        $beneficiaryId = $request->query('beneficiary_id', 'all');
         $search = $request->query('search', '');
 
         $query = Testament::where('user_id', $user->id)
@@ -22,6 +23,12 @@ class TestamentController extends Controller
 
         if ($category !== 'all') {
             $query->where('category', $category);
+        }
+
+        if ($beneficiaryId === 'unassigned') {
+            $query->whereNull('beneficiary_id');
+        } elseif ($beneficiaryId !== 'all') {
+            $query->where('beneficiary_id', $beneficiaryId);
         }
 
         if (!empty($search)) {
@@ -47,6 +54,7 @@ class TestamentController extends Controller
             'beneficiaries' => $beneficiaries,
             'filters' => [
                 'category' => $category,
+                'beneficiary_id' => $beneficiaryId,
                 'search' => $search,
             ],
             'stats' => [
@@ -68,8 +76,8 @@ class TestamentController extends Controller
             'content' => 'required|string|max:10000',
             'status' => 'required|string|in:aktif,rahasia_penuh,selesai',
         ], [
-            'title.required' => 'Judul surat wasiat/amanat wajib diisi.',
-            'content.required' => 'Isi pesan amanat atau rincian wasiat tidak boleh kosong.',
+            'title.required' => 'Judul pesan wasiat atau catatan wajib diisi.',
+            'content.required' => 'Isi pesan atau rincian tidak boleh kosong.',
         ]);
 
         $testament = Testament::create([
@@ -93,9 +101,9 @@ class TestamentController extends Controller
                 'testament_title' => $testament->title,
                 'category' => $testament->category,
             ])
-            ->log("Menulis amanat wasiat / catatan baru: {$testament->title}");
+            ->log("Menulis pesan wasiat / catatan baru: {$testament->title}");
 
-        return redirect()->back()->with('success', 'Amanat wasiat berhasil dienkripsi dan disimpan!');
+        return redirect()->back()->with('success', 'Pesan wasiat berhasil diamankan dan disimpan!');
     }
 
     public function update(Request $request, Testament $testament)
@@ -133,9 +141,9 @@ class TestamentController extends Controller
                 'user_agent' => $request->userAgent(),
                 'testament_title' => $testament->title,
             ])
-            ->log("Memperbarui isi amanat wasiat: {$testament->title}");
+            ->log("Memperbarui pesan wasiat: {$testament->title}");
 
-        return redirect()->back()->with('success', 'Amanat wasiat berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Pesan wasiat berhasil diperbarui!');
     }
 
     public function destroy(Request $request, Testament $testament)
@@ -155,8 +163,8 @@ class TestamentController extends Controller
                 'user_agent' => $request->userAgent(),
                 'testament_title' => $title,
             ])
-            ->log("Menghapus catatan wasiat/amanat: {$title}");
+            ->log("Menghapus pesan wasiat: {$title}");
 
-        return redirect()->back()->with('success', 'Catatan amanat wasiat berhasil dihapus.');
+        return redirect()->back()->with('success', 'Pesan wasiat berhasil dihapus.');
     }
 }

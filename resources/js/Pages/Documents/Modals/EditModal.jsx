@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "react-hot-toast";
+import { X, Edit3, CheckCircle2 } from "lucide-react";
 
 export default function EditModal({
     isOpen,
@@ -8,7 +9,7 @@ export default function EditModal({
     document,
     beneficiaries = [],
 }) {
-    const { data, setData, put, errors, reset, clearErrors } = useForm({
+    const { data, setData, put, reset, clearErrors } = useForm({
         title: "",
         category: "",
         beneficiary_id: "",
@@ -49,169 +50,168 @@ export default function EditModal({
         put(`/documents/${document.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(
-                    "Informasi & alokasi warisan berhasil diperbarui!",
-                );
+                toast.success("Perubahan informasi dokumen berhasil disimpan!");
                 closeModal();
             },
             onError: () => {
-                toast.error("Gagal memperbarui dokumen.");
+                toast.error("Gagal menyimpan perubahan.");
             },
             onFinish: () => setIsSubmitting(false),
         });
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/70 backdrop-blur-md transition-all duration-300">
-            <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] w-full max-w-2xl overflow-hidden border border-white/50 flex flex-col max-h-[95vh] animate-in zoom-in-95 fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/75 backdrop-blur-md transition-all duration-300">
+            <div className="bg-white rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.65)] w-full max-w-3xl overflow-hidden border border-white/60 flex flex-col max-h-[92vh] animate-in zoom-in-95 fade-in duration-300">
                 {/* Header Modal */}
-                <div className="flex justify-between items-center p-6 md:p-8 border-b border-slate-100 bg-amber-50/30 shrink-0 relative overflow-hidden">
-                    <div className="flex items-center gap-4 relative z-10">
-                        <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-2xl shadow-lg">
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2.5"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                />
-                            </svg>
+                <div className="flex justify-between items-center p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white shrink-0">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3.5 bg-amber-500/20 border border-amber-400/30 text-amber-300 rounded-2xl">
+                            <Edit3 size={24} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800 tracking-tight">
-                                Edit Metadata & Alokasi Warisan
+                            <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 block">
+                                Perbarui Rincian Berkas
+                            </span>
+                            <h2 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
+                                Ubah Keterangan & Penerima Waris
                             </h2>
-                            <p className="text-sm font-medium text-slate-500 mt-0.5">
-                                Ubah penerima waris dan valuasi tanpa menyentuh
-                                file fisik.
-                            </p>
                         </div>
                     </div>
                     <button
                         onClick={closeModal}
-                        className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                        className="p-2.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
                     >
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2.5"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
+                        <X size={22} strokeWidth={2.5} />
                     </button>
                 </div>
 
-                {/* Body Modal */}
-                <div className="p-6 md:p-8 overflow-y-auto bg-slate-50/30 flex-1">
+                {/* Body Modal Lega */}
+                <div className="p-6 sm:p-8 overflow-y-auto bg-slate-50/40 flex-1">
                     <form
                         id="editDocumentForm"
                         onSubmit={submit}
-                        className="space-y-5"
+                        className="space-y-6"
                     >
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                Nama Dokumen / Keterangan{" "}
-                                <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={data.title}
-                                onChange={(e) =>
-                                    setData("title", e.target.value)
-                                }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
-                                required
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
                             <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Kategori{" "}
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Nama Dokumen atau Harta Aset{" "}
                                     <span className="text-rose-500">*</span>
                                 </label>
-                                <select
-                                    value={data.category}
-                                    onChange={(e) =>
-                                        setData("category", e.target.value)
-                                    }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none cursor-pointer"
-                                >
-                                    <option value="sertifikat_tanah">
-                                        Sertifikat Tanah / Properti
-                                    </option>
-                                    <option value="bpkb">
-                                        BPKB / Kendaraan
-                                    </option>
-                                    <option value="wasiat">
-                                        Surat Wasiat / Akta
-                                    </option>
-                                    <option value="lainnya">
-                                        Dokumen Lainnya
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Alokasikan ke Ahli Waris
-                                </label>
-                                <select
-                                    value={data.beneficiary_id}
-                                    onChange={(e) =>
-                                        setData(
-                                            "beneficiary_id",
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none cursor-pointer"
-                                >
-                                    <option value="">
-                                        -- Belum Dialokasikan / Umum --
-                                    </option>
-                                    {beneficiaries.map((b) => (
-                                        <option key={b.id} value={b.id}>
-                                            {b.name} (
-                                            {b.relationship.replace("_", "/")})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Estimasi Nilai Aset (Rp)
-                                </label>
                                 <input
-                                    type="number"
-                                    min="0"
-                                    value={data.estimated_value}
+                                    type="text"
+                                    value={data.title}
                                     onChange={(e) =>
-                                        setData(
-                                            "estimated_value",
-                                            e.target.value,
-                                        )
+                                        setData("title", e.target.value)
                                     }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
+                                    required
                                 />
                             </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Jenis Dokumen{" "}
+                                        <span className="text-rose-500">*</span>
+                                    </label>
+                                    <select
+                                        value={data.category}
+                                        onChange={(e) =>
+                                            setData("category", e.target.value)
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none cursor-pointer"
+                                    >
+                                        <option value="sertifikat_tanah">
+                                            Sertifikat Tanah / Rumah (SHM/HGB)
+                                        </option>
+                                        <option value="bpkb">
+                                            BPKB Kendaraan Bermotor
+                                        </option>
+                                        <option value="wasiat">
+                                            Surat Wasiat / Akta Notaris
+                                        </option>
+                                        <option value="lainnya">
+                                            Dokumen Penting Lainnya
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Nomor Sertifikat / Nomor BPKB
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.document_number}
+                                        onChange={(e) =>
+                                            setData(
+                                                "document_number",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-mono font-bold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Diwariskan Kepada Siapa?
+                                    </label>
+                                    <select
+                                        value={data.beneficiary_id}
+                                        onChange={(e) =>
+                                            setData(
+                                                "beneficiary_id",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none cursor-pointer"
+                                    >
+                                        <option value="">
+                                            -- Belum Ditentukan / Milik Bersama
+                                            --
+                                        </option>
+                                        {beneficiaries.map((b) => (
+                                            <option key={b.id} value={b.id}>
+                                                {b.name} (
+                                                {b.relationship.replace(
+                                                    "_",
+                                                    "/",
+                                                )}
+                                                )
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                        Perkiraan Nilai Harta Saat Ini (Rupiah)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={data.estimated_value}
+                                        onChange={(e) =>
+                                            setData(
+                                                "estimated_value",
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-emerald-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
+                                    />
+                                </div>
+                            </div>
+
                             <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Lokasi Fisik Aset
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Alamat atau Lokasi Fisik Harta / Tanah
                                 </label>
                                 <input
                                     type="text"
@@ -227,35 +227,19 @@ export default function EditModal({
                             </div>
 
                             <div>
-                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                    Nomor Dokumen
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Catatan Letak Berkas Asli & Pesan untuk
+                                    Keluarga
                                 </label>
-                                <input
-                                    type="text"
-                                    value={data.document_number}
+                                <textarea
+                                    rows="3"
+                                    value={data.notes}
                                     onChange={(e) =>
-                                        setData(
-                                            "document_number",
-                                            e.target.value,
-                                        )
+                                        setData("notes", e.target.value)
                                     }
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-medium text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none leading-relaxed"
                                 />
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2 ml-1">
-                                Catatan Tambahan Khusus (Dienkripsi)
-                            </label>
-                            <textarea
-                                rows="3"
-                                value={data.notes}
-                                onChange={(e) =>
-                                    setData("notes", e.target.value)
-                                }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none"
-                            />
                         </div>
                     </form>
                 </div>
@@ -265,16 +249,17 @@ export default function EditModal({
                     <button
                         type="button"
                         onClick={closeModal}
-                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all"
+                        className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm transition"
                     >
-                        Batalkan
+                        Batal
                     </button>
                     <button
                         type="submit"
                         form="editDocumentForm"
                         disabled={isSubmitting}
-                        className="px-8 py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 shadow-lg transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-8 py-3.5 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
                     >
+                        <CheckCircle2 size={18} strokeWidth={2.5} />
                         {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
                     </button>
                 </div>

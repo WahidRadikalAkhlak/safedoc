@@ -14,6 +14,7 @@ class VaultCredentialController extends Controller
     {
         $user = auth()->user();
         $category = $request->query('category', 'all');
+        $beneficiaryId = $request->query('beneficiary_id', 'all');
         $search = $request->query('search', '');
 
         $query = VaultCredential::where('user_id', $user->id)
@@ -22,6 +23,12 @@ class VaultCredentialController extends Controller
 
         if ($category !== 'all') {
             $query->where('category', $category);
+        }
+
+        if ($beneficiaryId === 'unassigned') {
+            $query->whereNull('beneficiary_id');
+        } elseif ($beneficiaryId !== 'all') {
+            $query->where('beneficiary_id', $beneficiaryId);
         }
 
         if (!empty($search)) {
@@ -45,6 +52,7 @@ class VaultCredentialController extends Controller
             'beneficiaries' => $beneficiaries,
             'filters' => [
                 'category' => $category,
+                'beneficiary_id' => $beneficiaryId,
                 'search' => $search,
             ],
             'stats' => [
@@ -66,9 +74,9 @@ class VaultCredentialController extends Controller
             'secret_pin_or_password' => 'required|string|max:500',
             'access_instructions' => 'nullable|string|max:2000',
         ], [
-            'title.required' => 'Nama kredensial/akun wajib diisi.',
-            'account_identifier.required' => 'Nomor rekening, polis, atau ID akun wajib diisi.',
-            'secret_pin_or_password.required' => 'PIN, kata sandi, atau kombinasi kunci wajib diisi.',
+            'title.required' => 'Nama rekening, polis, atau brankas wajib diisi.',
+            'account_identifier.required' => 'Nomor rekening, nomor polis, atau ID akun wajib diisi.',
+            'secret_pin_or_password.required' => 'Kode PIN, kata sandi, atau kombinasi kunci wajib diisi.',
         ]);
 
         $credential = VaultCredential::create([
@@ -92,9 +100,9 @@ class VaultCredentialController extends Controller
                 'credential_title' => $credential->title,
                 'category' => $credential->category,
             ])
-            ->log("Menyimpan kredensial & PIN rahasia baru: {$credential->title}");
+            ->log("Menyimpan data rekening/PIN rahasia: {$credential->title}");
 
-        return redirect()->back()->with('success', 'Kredensial & PIN berhasil dienkripsi ke dalam brankas!');
+        return redirect()->back()->with('success', 'Data rekening & PIN berhasil diamankan ke dalam brankas!');
     }
 
     public function update(Request $request, VaultCredential $credential)
@@ -132,9 +140,9 @@ class VaultCredentialController extends Controller
                 'user_agent' => $request->userAgent(),
                 'credential_title' => $credential->title,
             ])
-            ->log("Memperbarui data kredensial rahasia: {$credential->title}");
+            ->log("Memperbarui data rekening/PIN: {$credential->title}");
 
-        return redirect()->back()->with('success', 'Data kredensial berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data rekening & PIN berhasil diperbarui!');
     }
 
     public function destroy(Request $request, VaultCredential $credential)
@@ -154,8 +162,8 @@ class VaultCredentialController extends Controller
                 'user_agent' => $request->userAgent(),
                 'credential_title' => $title,
             ])
-            ->log("Menghapus permanen kredensial dari brankas: {$title}");
+            ->log("Menghapus permanen rekening/PIN dari brankas: {$title}");
 
-        return redirect()->back()->with('success', 'Kredensial berhasil dihapus dari brankas.');
+        return redirect()->back()->with('success', 'Data rekening & PIN berhasil dihapus.');
     }
 }

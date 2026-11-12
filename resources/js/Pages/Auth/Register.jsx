@@ -1,231 +1,256 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import GuestLayout from "../../Layouts/GuestLayout";
+import {
+    UserPlus,
+    Mail,
+    KeyRound,
+    User,
+    Phone,
+    CreditCard,
+    ShieldCheck,
+    ArrowRight,
+} from "lucide-react";
 
 export default function Register() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
         phone_number: "",
         nik: "",
-        address: "",
         password: "",
         password_confirmation: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post("/register");
+        post("/register", {
+            onFinish: () => reset("password", "password_confirmation"),
+        });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Daftar Akun Brankas" />
+        <div className="min-h-screen bg-slate-950 font-['Plus_Jakarta_Sans',sans-serif] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+            <Head title="Buat Brankas Digital Baru" />
 
-            <div className="mb-6 text-center">
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                    Pendaftaran Akun Brankas
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                    Lengkapi data verifikasi identitas Anda untuk perlindungan
-                    dokumen maksimal.
-                </p>
-            </div>
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <form onSubmit={submit} className="space-y-4">
-                <div>
-                    <label
-                        className="block text-sm font-semibold text-slate-700 mb-1"
-                        htmlFor="name"
-                    >
-                        Nama Lengkap (Sesuai KTP)
-                    </label>
-                    <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        value={data.name}
-                        onChange={(e) => setData("name", e.target.value)}
-                        className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                        placeholder="cth: Ahmad Fauzi"
-                        required
-                    />
-                    {errors.name && (
-                        <p className="text-red-500 text-xs mt-1">
-                            {errors.name}
-                        </p>
-                    )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="email"
-                        >
-                            Alamat Email Aktif
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
-                            onChange={(e) => setData("email", e.target.value)}
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            placeholder="nama@email.com"
-                            required
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.email}
-                            </p>
-                        )}
-                    </div>
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="phone_number"
-                        >
-                            Nomor WhatsApp / HP
-                        </label>
-                        <input
-                            id="phone_number"
-                            type="text"
-                            name="phone_number"
-                            value={data.phone_number}
-                            onChange={(e) =>
-                                setData("phone_number", e.target.value)
-                            }
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            placeholder="081234567890"
-                            required
-                        />
-                        {errors.phone_number && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.phone_number}
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="nik"
-                        >
-                            Nomor Induk Kependudukan (NIK)
-                        </label>
-                        <input
-                            id="nik"
-                            type="text"
-                            name="nik"
-                            value={data.nik}
-                            onChange={(e) => setData("nik", e.target.value)}
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            maxLength="16"
-                            placeholder="16 digit NIK resmi"
-                            required
-                        />
-                        {errors.nik && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.nik}
-                            </p>
-                        )}
-                    </div>
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="address"
-                        >
-                            Alamat Domisili Sesuai KTP
-                        </label>
-                        <input
-                            id="address"
-                            type="text"
-                            name="address"
-                            value={data.address}
-                            onChange={(e) => setData("address", e.target.value)}
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            placeholder="Kota, Provinsi"
-                            required
-                        />
-                        {errors.address && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.address}
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="password"
-                        >
-                            Password Vault
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            value={data.password}
-                            onChange={(e) =>
-                                setData("password", e.target.value)
-                            }
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            placeholder="Min. 8 karakter"
-                            required
-                        />
-                        {errors.password && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.password}
-                            </p>
-                        )}
-                    </div>
-                    <div>
-                        <label
-                            className="block text-sm font-semibold text-slate-700 mb-1"
-                            htmlFor="password_confirmation"
-                        >
-                            Ulangi Password
-                        </label>
-                        <input
-                            id="password_confirmation"
-                            type="password"
-                            name="password_confirmation"
-                            value={data.password_confirmation}
-                            onChange={(e) =>
-                                setData("password_confirmation", e.target.value)
-                            }
-                            className="block w-full px-4 py-2.5 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all text-sm outline-none"
-                            required
-                        />
-                        {errors.password_confirmation && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.password_confirmation}
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="pt-4 flex items-center justify-between">
+            <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.55)] overflow-hidden border border-white/80 relative z-10">
+                {/* Header */}
+                <div className="p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white text-center space-y-2.5">
                     <Link
-                        href="/login"
-                        className="text-xs text-sky-600 hover:text-sky-800 font-medium underline"
+                        href="/"
+                        className="inline-block bg-white px-4 py-2 rounded-2xl shadow-md"
                     >
-                        Sudah punya akun? Masuk
+                        <img
+                            src="/images/logo-safedoc.png"
+                            alt="SafeDoc"
+                            className="h-8 w-auto"
+                        />
                     </Link>
+                    <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 block">
+                            Registrasi Kepemilikan Brankas
+                        </span>
+                        <h1 className="text-2xl font-black tracking-tight mt-1">
+                            Daftarkan Brankas Pribadi & Keluarga
+                        </h1>
+                        <p className="text-xs font-medium text-slate-300 mt-1">
+                            Lengkapi identitas Anda untuk mengaktifkan lemari
+                            enkripsi AES-256 dan pengaman 2FA.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Form */}
+                <form
+                    onSubmit={submit}
+                    className="p-6 sm:p-8 space-y-5 bg-white"
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Nama Lengkap Sesuai KTP{" "}
+                                <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <User
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) =>
+                                        setData("name", e.target.value)
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="Nama Lengkap Anda"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+                            {errors.name && (
+                                <p className="text-rose-500 text-xs font-bold mt-1.5">
+                                    {errors.name}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Alamat Email Aktif{" "}
+                                <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <Mail
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="email"
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData("email", e.target.value)
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="nama@email.com"
+                                    required
+                                />
+                            </div>
+                            {errors.email && (
+                                <p className="text-rose-500 text-xs font-bold mt-1.5">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Nomor KTP / NIK (Opsional)
+                            </label>
+                            <div className="relative">
+                                <CreditCard
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="text"
+                                    value={data.nik}
+                                    onChange={(e) =>
+                                        setData("nik", e.target.value)
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-mono font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="16 Angka NIK"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Nomor HP / WhatsApp
+                            </label>
+                            <div className="relative">
+                                <Phone
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="text"
+                                    value={data.phone_number}
+                                    onChange={(e) =>
+                                        setData("phone_number", e.target.value)
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="0812-xxxx-xxxx"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Buat Kata Sandi Utama{" "}
+                                <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <KeyRound
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="password"
+                                    value={data.password}
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="Minimal 8 karakter"
+                                    required
+                                />
+                            </div>
+                            {errors.password && (
+                                <p className="text-rose-500 text-xs font-bold mt-1.5">
+                                    {errors.password}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                Ulangi Kata Sandi Utama{" "}
+                                <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <KeyRound
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                    type="password"
+                                    value={data.password_confirmation}
+                                    onChange={(e) =>
+                                        setData(
+                                            "password_confirmation",
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
+                                    placeholder="Ketik ulang kata sandi"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <button
                         type="submit"
                         disabled={processing}
-                        className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-[#0052CC] to-[#00A3FF] hover:brightness-110 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md shadow-sky-500/25 transition disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-[0_10px_25px_rgba(14,165,233,0.3)] transition disabled:opacity-50"
                     >
-                        {processing ? "Memproses..." : "Daftar & Pasang 2FA →"}
+                        <UserPlus size={18} />
+                        {processing
+                            ? "Menyiapkan Brankas..."
+                            : "Aktifkan Brankas Digital Saya"}
+                        <ArrowRight size={17} />
                     </button>
-                </div>
-            </form>
-        </GuestLayout>
+
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                        <span className="flex items-center gap-1.5 text-emerald-600">
+                            <ShieldCheck size={15} /> Kunci Enkripsi Otomatis
+                        </span>
+                        <Link
+                            href="/login"
+                            className="text-sky-600 hover:underline font-extrabold"
+                        >
+                            Sudah punya akun? Masuk di sini
+                        </Link>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }

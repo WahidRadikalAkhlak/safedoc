@@ -38,4 +38,14 @@ class Beneficiary extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function credentials(): HasMany
+    {
+        return $this->hasMany(VaultCredential::class);
+    }
+
+    public function testaments(): HasMany
+    {
+        return $this->hasMany(Testament::class);
+    }
 }

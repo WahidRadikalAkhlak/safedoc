@@ -12,9 +12,10 @@ import {
     LogOut,
     Menu,
     Lock,
+    HelpCircle,
 } from "lucide-react";
 
-export default function Header({ sidebarOpen, setSidebarOpen }) {
+export default function Header({ sidebarOpen, setSidebarOpen, onOpenGuide }) {
     const { auth } = usePage().props;
     const authUser = auth.user;
 
@@ -129,21 +130,30 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                                 SafeDoc Vault
                             </p>
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                                Brankas Digital Pribadi
+                                Brankas Digital & Arsip Warisan
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* KANAN: Notifikasi & Profil Dropdown */}
-                <div className="flex items-center gap-x-3 sm:gap-x-5 relative z-10">
+                {/* KANAN: Tombol Panduan, Status Keamanan, Lonceng & Profil */}
+                <div className="flex items-center gap-x-2.5 sm:gap-x-4 relative z-10">
+                    <button
+                        onClick={onOpenGuide}
+                        className="inline-flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 px-3.5 py-2 rounded-xl border border-sky-200/80 shadow-sm transition text-xs font-extrabold"
+                        title="Buka Panduan & Cara Input Halaman Ini"
+                    >
+                        <HelpCircle size={15} className="text-sky-600" />
+                        <span className="hidden sm:inline">Panduan Modul</span>
+                    </button>
+
                     <Link
                         href="/security-center"
-                        className="hidden sm:flex items-center gap-1.5 bg-emerald-50/90 hover:bg-emerald-100/80 backdrop-blur-md px-4 py-2 rounded-xl border border-emerald-100 shadow-sm transition"
+                        className="hidden lg:flex items-center gap-1.5 bg-emerald-50/90 hover:bg-emerald-100/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-emerald-100 shadow-sm transition"
                     >
                         <Lock size={14} className="text-emerald-500" />
                         <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
-                            AES-256 + 2FA Aktif
+                            AES-256 + 2FA
                         </span>
                     </Link>
 

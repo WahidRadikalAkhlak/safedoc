@@ -1,6 +1,6 @@
 import React from "react";
-import { Head, useForm } from "@inertiajs/react";
-import GuestLayout from "../../Layouts/GuestLayout";
+import { Head, useForm, Link } from "@inertiajs/react";
+import { QrCode, Smartphone, CheckCircle2, LogOut } from "lucide-react";
 
 export default function TwoFactorSetup({ qrCodeSvg, secret }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -13,89 +13,116 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Aktifkan Dua Faktor (2FA)" />
+        <div className="min-h-screen bg-slate-950 font-['Plus_Jakarta_Sans',sans-serif] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+            <Head title="Hubungkan HP Pengaman (Google Authenticator)" />
 
-            <div className="text-center mb-6">
-                <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+            <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.55)] overflow-hidden border border-white/80 relative z-10">
+                {/* Header */}
+                <div className="p-7 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3.5 bg-sky-500/20 border border-sky-400/30 text-sky-300 rounded-2xl">
+                            <QrCode size={28} strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 block">
+                                Pengamanan Wajib Brankas Digital
+                            </span>
+                            <h1 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
+                                Hubungkan HP Anda dengan Brankas
+                            </h1>
+                        </div>
+                    </div>
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        className="p-2.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition text-xs font-bold flex items-center gap-1"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        <LogOut size={16} /> Keluar
+                    </Link>
+                </div>
+
+                {/* Body Langkah Mudah Scan QR */}
+                <div className="p-6 sm:p-8 space-y-6 bg-slate-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-200/60">
+                            <img
+                                src={`data:image/svg+xml;base64,${qrCodeSvg}`}
+                                alt="QR Code 2FA"
+                                className="w-48 h-48 object-contain rounded-xl bg-white p-2 shadow-sm"
+                            />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-3">
+                                Kode Manual:{" "}
+                                <strong className="text-slate-700 font-mono">
+                                    {secret}
+                                </strong>
+                            </span>
+                        </div>
+
+                        <div className="space-y-3 text-xs font-medium text-slate-600 leading-relaxed">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-sky-700 font-black uppercase tracking-wider text-[10px]">
+                                <Smartphone size={13} /> Cara Menghubungkan HP:
+                            </div>
+                            <p>
+                                <strong>1.</strong> Unduh aplikasi{" "}
+                                <strong>Google Authenticator</strong> di Play
+                                Store (Android) atau App Store (iPhone).
+                            </p>
+                            <p>
+                                <strong>2.</strong> Buka aplikasinya, tekan
+                                tombol <strong>"+" (Tambah)</strong> lalu pilih{" "}
+                                <strong>"Pindai Kode QR"</strong>.
+                            </p>
+                            <p>
+                                <strong>3.</strong> Arahkan kamera HP Anda ke
+                                kotak Barcode di samping, lalu masukkan 6 angka
+                                yang muncul pada kolom di bawah ini.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form
+                        onSubmit={submit}
+                        className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4"
+                    >
+                        <label className="block text-sm font-extrabold text-slate-800 text-center">
+                            Ketik 6 Angka dari Aplikasi Google Authenticator
+                            Anda:
+                        </label>
+                        <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength="6"
+                            value={data.code}
+                            onChange={(e) =>
+                                setData(
+                                    "code",
+                                    e.target.value.replace(/\D/g, ""),
+                                )
+                            }
+                            placeholder="000000"
+                            className="w-full text-center text-2xl tracking-[0.5em] font-mono font-black py-3.5 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:bg-white focus:ring-4 focus:ring-sky-500/15 focus:border-sky-500 outline-none transition"
+                            required
                         />
-                    </svg>
+                        {errors.code && (
+                            <p className="text-rose-600 text-xs font-extrabold text-center">
+                                {errors.code}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={processing || data.code.length !== 6}
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
+                        >
+                            <CheckCircle2 size={18} />
+                            {processing
+                                ? "Mengaktifkan Pengaman..."
+                                : "Aktifkan Pengaman & Buka Brankas"}
+                        </button>
+                    </form>
                 </div>
-                <h2 className="text-xl font-bold text-slate-900">
-                    Aktifkan Dua Faktor (2FA)
-                </h2>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                    Scan barcode ini menggunakan aplikasi{" "}
-                    <strong>Google/Microsoft Authenticator</strong> di HP Anda.
-                </p>
             </div>
-
-            <div className="flex justify-center p-4 bg-white/50 border border-slate-200 rounded-2xl mb-4 shadow-inner">
-                {/* Asumsi qrCodeSvg dikirim sebagai base64 dari backend seperti format Wahid */}
-                <img
-                    src={`data:image/svg+xml;base64,${qrCodeSvg}`}
-                    alt="2FA QR Code"
-                    className="w-48 h-48"
-                />
-            </div>
-
-            <div className="text-center mb-6">
-                <p className="text-[11px] text-slate-500 mb-2">
-                    Atau masukkan kode kunci rahasia secara manual:
-                </p>
-                <code className="text-xs font-mono font-bold text-slate-800 bg-white/80 border border-slate-200 px-4 py-2 rounded-lg select-all shadow-sm">
-                    {secret}
-                </code>
-            </div>
-
-            <form onSubmit={submit} className="space-y-4">
-                <div>
-                    <label
-                        className="block text-sm font-semibold text-slate-700 mb-2 text-center"
-                        htmlFor="code"
-                    >
-                        Masukkan 6 Digit Angka
-                    </label>
-                    <input
-                        id="code"
-                        type="text"
-                        name="code"
-                        value={data.code}
-                        onChange={(e) => setData("code", e.target.value)}
-                        className="block w-full text-center text-2xl tracking-[0.3em] font-mono font-bold py-3 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all outline-none"
-                        maxLength="6"
-                        autoFocus
-                        required
-                        placeholder="000000"
-                    />
-                    {errors.code && (
-                        <p className="text-red-500 text-xs mt-2 text-center">
-                            {errors.code}
-                        </p>
-                    )}
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={processing}
-                    className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/30 transform transition hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {processing
-                        ? "Memproses..."
-                        : "Verifikasi & Masuk ke Brankas"}
-                </button>
-            </form>
-        </GuestLayout>
+        </div>
     );
 }

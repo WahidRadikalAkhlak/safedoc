@@ -1,79 +1,77 @@
 import React from "react";
 import { Head, useForm } from "@inertiajs/react";
-import GuestLayout from "../../Layouts/GuestLayout";
+import { ShieldCheck, KeyRound } from "lucide-react";
 
 export default function ConfirmPassword() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         password: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post("/confirm-password");
+        post("/confirm-password", {
+            onFinish: () => reset("password"),
+        });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Konfirmasi Password" />
+        <div className="min-h-screen bg-slate-950 font-['Plus_Jakarta_Sans',sans-serif] flex items-center justify-center p-4 sm:p-6">
+            <Head title="Konfirmasi Keamanan Brankas" />
 
-            <div className="mb-6 text-center">
-                <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                        />
-                    </svg>
-                </div>
-                <h2 className="text-xl font-bold text-slate-800">
-                    Area Terproteksi
-                </h2>
-                <p className="text-sm text-slate-500 mt-2">
-                    Ini adalah area aman pada aplikasi. Harap konfirmasi
-                    password Anda sebelum melanjutkan.
-                </p>
-            </div>
-
-            <form onSubmit={submit} className="space-y-5">
-                <div>
-                    <label
-                        className="block text-sm font-semibold text-slate-700 mb-1"
-                        htmlFor="password"
-                    >
-                        Password
-                    </label>
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        onChange={(e) => setData("password", e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-white/50 border border-slate-200 focus:border-sky-500 focus:ring focus:ring-sky-200 transition-all outline-none"
-                        required
-                        autoFocus
+            <div className="w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.55)] overflow-hidden border border-white/80">
+                <div className="p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white text-center space-y-2">
+                    <ShieldCheck
+                        size={32}
+                        className="mx-auto text-emerald-400"
                     />
-                    {errors.password && (
-                        <p className="text-red-500 text-xs mt-1">
-                            {errors.password}
-                        </p>
-                    )}
+                    <h1 className="text-2xl font-black">
+                        Konfirmasi Kata Sandi
+                    </h1>
+                    <p className="text-xs text-slate-300">
+                        Ini adalah area rahasia brankas. Mohon masukkan kata
+                        sandi Anda sebelum melanjutkan.
+                    </p>
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={processing}
-                    className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 disabled:opacity-50"
-                >
-                    {processing ? "Memeriksa..." : "Konfirmasi"}
-                </button>
-            </form>
-        </GuestLayout>
+                <form onSubmit={submit} className="p-8 space-y-5 bg-white">
+                    <div>
+                        <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                            Kata Sandi Utama
+                        </label>
+                        <div className="relative">
+                            <KeyRound
+                                size={18}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
+                            <input
+                                type="password"
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:border-sky-500 outline-none"
+                                required
+                                autoFocus
+                            />
+                        </div>
+                        {errors.password && (
+                            <p className="text-rose-500 text-xs font-bold mt-2">
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="w-full py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
+                    >
+                        {processing
+                            ? "Memverifikasi..."
+                            : "Konfirmasi & Lanjutkan"}
+                    </button>
+                </form>
+            </div>
+        </div>
     );
 }

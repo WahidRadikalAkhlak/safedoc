@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "react-hot-toast";
+import { Trash2, AlertTriangle, X } from "lucide-react";
 
 export default function DeleteUserForm({ className = "" }) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
@@ -18,8 +19,6 @@ export default function DeleteUserForm({ className = "" }) {
         password: "",
     });
 
-    const confirmUserDeletion = () => setConfirmingUserDeletion(true);
-
     const closeModal = () => {
         setConfirmingUserDeletion(false);
         clearErrors();
@@ -32,96 +31,120 @@ export default function DeleteUserForm({ className = "" }) {
             preserveScroll: true,
             onSuccess: () => closeModal(),
             onError: () => {
-                toast.error("Password salah!");
-                passwordInput.current.focus();
+                toast.error("Kata sandi salah!");
+                passwordInput.current?.focus();
             },
             onFinish: () => reset(),
         });
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-xl font-black text-rose-600 tracking-tight">
-                    Hapus Akun Permanen
-                </h2>
-                <p className="mt-1 text-sm font-medium text-slate-500">
-                    Sekali akun dihapus, seluruh sumber daya, kunci dekripsi
-                    2FA, dan dokumen akan dihancurkan.
-                </p>
-            </header>
+        <section className={`space-y-5 ${className}`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                    <div className="p-3.5 rounded-2xl bg-rose-50 text-rose-600 shrink-0">
+                        <Trash2 size={24} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-black text-rose-700 tracking-tight">
+                            3. Tutup & Hapus Seluruh Brankas Permanen
+                        </h2>
+                        <p className="mt-1 text-sm font-medium text-slate-500">
+                            Menghapus akun akan menghancurkan seluruh berkas
+                            sertifikat, daftar ahli waris, dan catatan wasiat
+                            Anda. Pastikan Anda sudah mengunduh semua berkas
+                            sebelum melakukan tindakan ini.
+                        </p>
+                    </div>
+                </div>
 
-            <button
-                onClick={confirmUserDeletion}
-                className="px-6 py-3 bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold text-sm rounded-xl transition"
-            >
-                Hancurkan Akun Brankas
-            </button>
+                <button
+                    onClick={() => setConfirmingUserDeletion(true)}
+                    className="px-6 py-3.5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-black text-xs uppercase tracking-wider rounded-2xl border border-rose-200 transition shrink-0"
+                >
+                    Hapus Akun Brankas
+                </button>
+            </div>
 
-            {/* Modal Kritis Custom */}
             {confirmingUserDeletion && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md transition-all">
-                    <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] w-full max-w-lg overflow-hidden border border-white/50 animate-in zoom-in-95">
-                        <div className="p-6 bg-rose-50/50 border-b border-slate-100 flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-rose-500 to-red-600 text-white rounded-2xl animate-pulse shadow-lg">
-                                <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2.5"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-md transition-all">
+                    <div className="bg-white rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.65)] w-full max-w-xl overflow-hidden border border-white/60 animate-in zoom-in-95">
+                        <div className="p-6 sm:p-7 bg-gradient-to-r from-rose-950 to-slate-900 text-white flex justify-between items-center">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-rose-500/20 border border-rose-400/30 text-rose-300 rounded-2xl">
+                                    <AlertTriangle
+                                        size={24}
+                                        strokeWidth={2.5}
                                     />
-                                </svg>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-300 block">
+                                        Tindakan Permanen
+                                    </span>
+                                    <h2 className="text-xl font-black mt-0.5">
+                                        Konfirmasi Penghapusan Seluruh Brankas
+                                    </h2>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-black text-rose-700">
-                                    Konfirmasi Penghancuran
-                                </h2>
-                                <p className="text-sm font-medium text-rose-500/80">
-                                    Masukkan password untuk melanjutkan.
-                                </p>
-                            </div>
+                            <button
+                                onClick={closeModal}
+                                className="p-2 text-slate-300 hover:text-white rounded-xl"
+                            >
+                                <X size={20} />
+                            </button>
                         </div>
-                        <form onSubmit={deleteUser} className="p-6">
-                            <input
-                                ref={passwordInput}
-                                type="password"
-                                value={data.password}
-                                onChange={(e) =>
-                                    setData("password", e.target.value)
-                                }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 px-4 font-semibold text-slate-700 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none"
-                                placeholder="Masukkan password vault Anda..."
-                                autoFocus
-                                required
-                            />
-                            {errors.password && (
-                                <p className="text-rose-500 text-xs font-bold mt-1.5 ml-1">
-                                    {errors.password}
-                                </p>
-                            )}
 
-                            <div className="mt-6 flex justify-end gap-3">
+                        <form
+                            onSubmit={deleteUser}
+                            className="p-6 sm:p-8 space-y-5 bg-slate-50/40"
+                        >
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                                Seluruh dokumen sertifikat, rekening, dan surat
+                                wasiat di dalam brankas akan dihapus selamanya.
+                                Masukkan kata sandi utama Anda untuk
+                                mengonfirmasi:
+                            </p>
+
+                            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                                <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                                    Kata Sandi Utama Brankas{" "}
+                                    <span className="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    ref={passwordInput}
+                                    type="password"
+                                    value={data.password}
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 outline-none"
+                                    placeholder="Ketik kata sandi Anda..."
+                                    autoFocus
+                                    required
+                                />
+                                {errors.password && (
+                                    <p className="text-rose-500 text-xs font-bold mt-2">
+                                        {errors.password}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200"
+                                    className="px-6 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"
                                 >
                                     Batal
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="px-6 py-3 rounded-2xl font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-lg disabled:opacity-50"
+                                    className="px-7 py-3 rounded-2xl font-black text-white bg-gradient-to-r from-rose-600 to-red-600 hover:brightness-110 shadow-lg text-sm disabled:opacity-50"
                                 >
                                     {processing
                                         ? "Menghapus..."
-                                        : "Hancurkan Akun"}
+                                        : "Ya, Hancurkan Seluruh Brankas"}
                                 </button>
                             </div>
                         </form>

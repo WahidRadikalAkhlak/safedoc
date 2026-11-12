@@ -14,6 +14,9 @@ import {
     Trash2,
     Users,
     MapPin,
+    Layers,
+    FolderLock,
+    Coins,
 } from "lucide-react";
 
 export default function Index({
@@ -52,7 +55,7 @@ export default function Index({
     };
 
     const formatRupiah = (number) => {
-        if (!number || number <= 0) return "-";
+        if (!number || number <= 0) return "Belum diisi";
         return new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
@@ -61,17 +64,28 @@ export default function Index({
     };
 
     const categoryBadges = {
-        sertifikat_tanah: "bg-amber-50 text-amber-700 border-amber-200",
-        bpkb: "bg-blue-50 text-blue-700 border-blue-200",
-        wasiat: "bg-purple-50 text-purple-700 border-purple-200",
-        lainnya: "bg-slate-100 text-slate-700 border-slate-200",
+        sertifikat_tanah: {
+            label: "Sertifikat Tanah / Rumah",
+            style: "bg-amber-50 text-amber-700 border-amber-200",
+        },
+        bpkb: {
+            label: "BPKB Kendaraan",
+            style: "bg-blue-50 text-blue-700 border-blue-200",
+        },
+        wasiat: {
+            label: "Surat Wasiat / Akta",
+            style: "bg-purple-50 text-purple-700 border-purple-200",
+        },
+        lainnya: {
+            label: "Dokumen Penting",
+            style: "bg-slate-100 text-slate-700 border-slate-200",
+        },
     };
 
     return (
         <AuthenticatedLayout>
-            <Head title="Brankas Dokumen & Warisan" />
+            <Head title="Lemari Dokumen & Sertifikat" />
 
-            {/* Kumpulan Komponen Modal Interaktif */}
             <AddModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
@@ -97,32 +111,32 @@ export default function Index({
                 document={documentToDelete}
             />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
-                {/* Header & Button Trigger Add Modal */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                {/* Header Mewah */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-7 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
                     <div>
                         <h2 className="font-extrabold text-2xl text-slate-900 leading-tight">
-                            Brankas Dokumen & Arsip Warisan
+                            Lemari Dokumen & Sertifikat Berharga
                         </h2>
                         <p className="text-sm font-medium text-slate-500 mt-1">
-                            Penyimpanan terenkripsi AES-256 beserta pemetaan
-                            ahli waris keluarga.
+                            Simpan file Sertifikat Tanah (SHM), BPKB, dan Akta
+                            penting Anda lengkap dengan nama penerima warisnya.
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 shrink-0">
                         <Link
-                            href="/beneficiaries"
+                            href="/estate-summary"
                             className="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-slate-100 hover:bg-slate-200 rounded-2xl font-bold text-xs text-slate-700 transition"
                         >
-                            <Users size={16} />
-                            Kelola Ahli Waris
+                            <Layers size={16} />
+                            Ringkasan Harta
                         </Link>
                         <button
                             onClick={() => setIsAddModalOpen(true)}
                             className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 rounded-2xl font-bold text-sm text-white shadow-[0_8px_16px_rgba(14,165,233,0.25)] hover:brightness-110 transition transform hover:-translate-y-0.5"
                         >
                             <Plus size={18} strokeWidth={2.5} />
-                            Upload Dokumen
+                            Simpan Dokumen Baru
                         </button>
                     </div>
                 </div>
@@ -133,63 +147,78 @@ export default function Index({
                     </div>
                 )}
 
-                {/* Statistik Berkas & Valuasi Warisan */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Total Dokumen Tersimpan
-                        </span>
-                        <h4 className="text-3xl font-black text-slate-800 mt-2">
-                            {totalFiles}{" "}
-                            <span className="text-sm font-bold text-slate-400">
-                                Berkas ({totalCapacityMB} MB)
+                {/* 3 Kartu Statistik */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between">
+                        <div>
+                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                Jumlah Dokumen Tersimpan
                             </span>
-                        </h4>
-                    </div>
-
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Estimasi Nilai Aset Terdata
-                        </span>
-                        <h4 className="text-2xl font-black text-emerald-600 mt-2">
-                            {formatRupiah(totalAssetValue) === "-"
-                                ? "Rp 0"
-                                : formatRupiah(totalAssetValue)}
-                        </h4>
-                    </div>
-
-                    <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                            Ahli Waris Terdaftar
-                        </span>
-                        <div className="flex items-center justify-between mt-2">
-                            <h4 className="text-3xl font-black text-sky-600">
-                                {beneficiaries.length}{" "}
+                            <h4 className="text-3xl font-black text-slate-800 mt-2">
+                                {totalFiles}{" "}
                                 <span className="text-sm font-bold text-slate-400">
-                                    Orang
+                                    Berkas ({totalCapacityMB} MB)
                                 </span>
                             </h4>
-                            <Link
-                                href="/beneficiaries"
-                                className="text-xs font-extrabold text-sky-600 hover:underline"
-                            >
-                                Lihat Semua &rarr;
-                            </Link>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-sky-50 text-sky-600">
+                            <FolderLock size={28} strokeWidth={2.5} />
+                        </div>
+                    </div>
+
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between">
+                        <div>
+                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                Total Nilai Dokumen Aset
+                            </span>
+                            <h4 className="text-2xl font-black text-emerald-600 mt-2">
+                                {totalAssetValue > 0
+                                    ? formatRupiah(totalAssetValue)
+                                    : "Rp 0"}
+                            </h4>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-600">
+                            <Coins size={28} strokeWidth={2.5} />
+                        </div>
+                    </div>
+
+                    <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between">
+                        <div>
+                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                Keluarga Penerima Waris
+                            </span>
+                            <div className="flex items-center gap-3 mt-2">
+                                <h4 className="text-3xl font-black text-indigo-600">
+                                    {beneficiaries.length}{" "}
+                                    <span className="text-sm font-bold text-slate-400">
+                                        Orang
+                                    </span>
+                                </h4>
+                                <Link
+                                    href="/beneficiaries"
+                                    className="text-xs font-extrabold text-sky-600 hover:underline"
+                                >
+                                    Atur Keluarga &rarr;
+                                </Link>
+                            </div>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-indigo-50 text-indigo-600">
+                            <Users size={28} strokeWidth={2.5} />
                         </div>
                     </div>
                 </div>
 
-                {/* Bar Filter Kategori, Filter Ahli Waris, & Pencarian */}
+                {/* Bar Filter Kategori, Filter Keluarga & Pencarian */}
                 <div className="bg-white p-4 sm:p-5 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col lg:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
                         {[
                             { key: "all", label: "Semua Berkas" },
                             {
                                 key: "sertifikat_tanah",
-                                label: "Sertifikat Tanah",
+                                label: "Sertifikat Tanah / Rumah",
                             },
-                            { key: "bpkb", label: "BPKB" },
-                            { key: "wasiat", label: "Surat Wasiat" },
+                            { key: "bpkb", label: "BPKB Kendaraan" },
+                            { key: "wasiat", label: "Surat Wasiat / Akta" },
                             { key: "lainnya", label: "Lainnya" },
                         ].map((tab) => (
                             <button
@@ -222,15 +251,15 @@ export default function Index({
                                     searchQuery,
                                 )
                             }
-                            className="w-full sm:w-52 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                            className="w-full sm:w-56 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
                         >
-                            <option value="all">Semua Ahli Waris</option>
+                            <option value="all">Semua Anggota Keluarga</option>
                             <option value="unassigned">
-                                Belum Dialokasikan
+                                Belum Ditentukan Penerimanya
                             </option>
                             {beneficiaries.map((b) => (
                                 <option key={b.id} value={b.id}>
-                                    Warisan: {b.name}
+                                    Milik: {b.name}
                                 </option>
                             ))}
                         </select>
@@ -243,7 +272,7 @@ export default function Index({
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Cari dokumen atau lokasi..."
+                                placeholder="Cari nama berkas atau lokasi..."
                                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:bg-white focus:border-sky-500 outline-none transition"
                             />
                             <Search
@@ -255,133 +284,164 @@ export default function Index({
                 </div>
 
                 {/* Tabel Dokumen */}
-                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
                     {documents.data.length === 0 ? (
                         <div className="text-center py-20 px-4">
+                            <div className="w-20 h-20 mx-auto bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
+                                <FolderLock size={36} />
+                            </div>
                             <h3 className="text-lg font-black text-slate-800">
-                                Tidak Ada Dokumen Ditemukan
+                                Belum Ada Dokumen pada Kategori Ini
                             </h3>
-                            <p className="text-sm font-medium text-slate-500 mt-2">
-                                Mulai amankan sertifikat tanah, BPKB, atau
-                                berkas wasiat Anda ke dalam brankas.
+                            <p className="text-sm font-medium text-slate-500 mt-1 max-w-md mx-auto">
+                                Silakan klik tombol di bawah untuk mulai
+                                menyimpan Sertifikat Tanah, BPKB, atau berkas
+                                keluarga Anda.
                             </p>
                             <button
                                 onClick={() => setIsAddModalOpen(true)}
                                 className="mt-6 px-6 py-2.5 bg-sky-50 text-sky-600 font-bold text-sm rounded-xl hover:bg-sky-100 transition"
                             >
-                                + Simpan Dokumen Baru
+                                + Simpan Dokumen Pertama
                             </button>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left whitespace-nowrap">
                                 <thead>
-                                    <tr className="bg-slate-50/50 border-b border-slate-100 text-xs font-black uppercase tracking-widest text-slate-400">
+                                    <tr className="bg-slate-50/60 border-b border-slate-100 text-[11px] font-black uppercase tracking-widest text-slate-400">
                                         <th className="py-5 px-6">
-                                            Identitas Dokumen & Lokasi
-                                        </th>
-                                        <th className="py-5 px-6">Kategori</th>
-                                        <th className="py-5 px-6">
-                                            Alokasi Ahli Waris
+                                            Nama Dokumen & Lokasi Harta
                                         </th>
                                         <th className="py-5 px-6">
-                                            Estimasi Nilai
+                                            Jenis Berkas
+                                        </th>
+                                        <th className="py-5 px-6">
+                                            Penerima Waris
+                                        </th>
+                                        <th className="py-5 px-6">
+                                            Perkiraan Nilai
                                         </th>
                                         <th className="py-5 px-6 text-right">
-                                            Aksi
+                                            Pilihan Aksi
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-sm font-semibold">
-                                    {documents.data.map((doc) => (
-                                        <tr
-                                            key={doc.id}
-                                            className="hover:bg-slate-50/80 transition group"
-                                        >
-                                            <td className="py-4 px-6">
-                                                <span className="font-extrabold text-slate-800 block text-base">
-                                                    {doc.title}
-                                                </span>
-                                                <div className="flex items-center gap-3 text-xs font-medium text-slate-400 mt-0.5">
-                                                    <span>
-                                                        {doc.original_filename}
+                                    {documents.data.map((doc) => {
+                                        const cat =
+                                            categoryBadges[doc.category] ||
+                                            categoryBadges.lainnya;
+                                        return (
+                                            <tr
+                                                key={doc.id}
+                                                className="hover:bg-slate-50/80 transition group"
+                                            >
+                                                <td className="py-4 px-6">
+                                                    <span className="font-extrabold text-slate-900 block text-base">
+                                                        {doc.title}
                                                     </span>
-                                                    {doc.asset_location && (
-                                                        <span className="inline-flex items-center gap-1 text-sky-600 font-bold">
-                                                            <MapPin size={12} />{" "}
-                                                            {doc.asset_location}
+                                                    <div className="flex items-center gap-3 text-xs font-medium text-slate-400 mt-0.5">
+                                                        <span>
+                                                            No:{" "}
+                                                            {doc.document_number ||
+                                                                "-"}
+                                                        </span>
+                                                        {doc.asset_location && (
+                                                            <span className="inline-flex items-center gap-1 text-sky-600 font-bold">
+                                                                <MapPin
+                                                                    size={12}
+                                                                />{" "}
+                                                                {
+                                                                    doc.asset_location
+                                                                }
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <span
+                                                        className={`px-3 py-1.5 text-[11px] font-black uppercase tracking-wider rounded-lg border ${cat.style}`}
+                                                    >
+                                                        {cat.label}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    {doc.beneficiary ? (
+                                                        <button
+                                                            onClick={() =>
+                                                                applyFilters(
+                                                                    activeCategory,
+                                                                    doc
+                                                                        .beneficiary
+                                                                        .id,
+                                                                    searchQuery,
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-extrabold transition"
+                                                            title="Klik untuk melihat semua berkas milik orang ini"
+                                                        >
+                                                            <Users size={13} />{" "}
+                                                            {
+                                                                doc.beneficiary
+                                                                    .name
+                                                            }
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-xl border border-amber-200/70">
+                                                            Belum Ditentukan
                                                         </span>
                                                     )}
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span
-                                                    className={`px-3 py-1.5 text-[11px] font-black uppercase tracking-wider rounded-lg border ${
-                                                        categoryBadges[
-                                                            doc.category
-                                                        ] ||
-                                                        categoryBadges.lainnya
-                                                    }`}
-                                                >
-                                                    {doc.category.replace(
-                                                        "_",
-                                                        " ",
+                                                </td>
+                                                <td className="py-4 px-6 font-extrabold text-emerald-600 text-xs">
+                                                    {formatRupiah(
+                                                        doc.estimated_value,
                                                     )}
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                {doc.beneficiary ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 text-xs font-extrabold">
-                                                        <Users size={13} />{" "}
-                                                        {doc.beneficiary.name}
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-xs font-bold text-slate-400 italic">
-                                                        Belum ditentukan
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="py-4 px-6 font-extrabold text-emerald-600 text-xs">
-                                                {formatRupiah(
-                                                    doc.estimated_value,
-                                                )}
-                                            </td>
-                                            <td className="py-4 px-6 text-right space-x-2">
-                                                <button
-                                                    onClick={() =>
-                                                        setDocumentToPreview(
-                                                            doc,
-                                                        )
-                                                    }
-                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 text-xs font-bold transition"
-                                                >
-                                                    <Eye size={14} /> Lihat
-                                                </button>
-                                                <a
-                                                    href={`/documents/${doc.id}/download`}
-                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-bold transition"
-                                                >
-                                                    <Download size={14} /> Unduh
-                                                </a>
-                                                <button
-                                                    onClick={() =>
-                                                        setDocumentToEdit(doc)
-                                                    }
-                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 text-xs font-bold transition"
-                                                >
-                                                    <Edit3 size={14} /> Edit
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        setDocumentToDelete(doc)
-                                                    }
-                                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold transition"
-                                                >
-                                                    <Trash2 size={14} /> Hapus
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                </td>
+                                                <td className="py-4 px-6 text-right space-x-2">
+                                                    <button
+                                                        onClick={() =>
+                                                            setDocumentToPreview(
+                                                                doc,
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-extrabold transition"
+                                                    >
+                                                        <Eye size={14} /> Lihat
+                                                        Berkas
+                                                    </button>
+                                                    <a
+                                                        href={`/documents/${doc.id}/download`}
+                                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-extrabold transition"
+                                                    >
+                                                        <Download size={14} />{" "}
+                                                        Unduh
+                                                    </a>
+                                                    <button
+                                                        onClick={() =>
+                                                            setDocumentToEdit(
+                                                                doc,
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-extrabold transition"
+                                                    >
+                                                        <Edit3 size={14} /> Ubah
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            setDocumentToDelete(
+                                                                doc,
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-extrabold transition"
+                                                    >
+                                                        <Trash2 size={14} />{" "}
+                                                        Hapus
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
