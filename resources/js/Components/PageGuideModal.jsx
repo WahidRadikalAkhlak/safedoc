@@ -10,205 +10,231 @@ import {
     ShieldCheck,
     Activity,
     UserCog,
+    UserPlus,
     CheckCircle2,
     Sparkles,
     Lock,
 } from "lucide-react";
 
 const GUIDES = {
-    dashboard: {
-        title: "Brankas Dokumen & Sertifikat",
-        subtitle: "Modul Penyimpanan Fisik Digital Terenkripsi AES-256",
-        icon: FolderLock,
-        purpose:
-            "Halaman ini berfungsi sebagai lemari besi utama untuk menyimpan salinan digital dari dokumen berharga milik Pak Nyoman seperti Sertifikat Hak Milik (SHM) Tanah, BPKB Kendaraan, Akta Notaris, hingga Surat Berharga. Setiap file yang diunggah otomatis diacak dengan algoritma militer AES-256 sehingga tidak dapat dibuka oleh pihak luar meskipun hardisk server diambil.",
-        steps: [
-            {
-                title: '1. Klik Tombol "+ Upload Dokumen"',
-                desc: "Tekan tombol biru di pojok kanan atas halaman untuk membuka formulir penyimpanan brankas baru.",
-            },
-            {
-                title: "2. Isi Identitas & Kategori Berkas",
-                desc: 'Masukkan nama aset yang jelas (contoh: "SHM Tanah Kavling Palu Timur"), pilih kategori dokumen, dan masukkan Nomor Sertifikat/BPKB.',
-            },
-            {
-                title: "3. Tentukan Ahli Waris & Estimasi Nilai Aset",
-                desc: 'Pilih siapa ahli waris yang berhak atas dokumen tersebut di kolom "Alokasikan ke Ahli Waris", lalu isi estimasi nilai pasar aset (Rp) dan lokasinya.',
-            },
-            {
-                title: "4. Pilih File & Enkripsi",
-                desc: 'Unggah file berformat PDF, JPG, atau PNG (maksimal 5 MB), tambahkan catatan letak dokumen fisik asli di rumah/bank, lalu klik "Enkripsi & Simpan".',
-            },
-        ],
-        tips: 'Sangat disarankan mendaftarkan nama keluarga terlebih dahulu di menu "Ahli Waris & Alokasi" agar saat mengunggah dokumen, Anda bisa langsung menautkan pemilik warisnya.',
-    },
     "estate-summary": {
-        title: "Ikhtisar Eksekutif & Surat Induk Warisan",
-        subtitle: "Pusat Komando Kekayaan Bersih & Cetak Dokumen Induk Wasiat",
+        title: "Ringkasan Harta & Surat Induk",
+        subtitle: "Pusat Kendali Harta Bersih & Cetak Surat Induk Warisan",
         icon: Layers,
         purpose:
-            "Halaman ini menyajikan rekapitulasi menyeluruh dari seluruh isi brankas Pak Nyoman. Sistem otomatis menjumlahkan nilai seluruh aset dokumen ditambah piutang (hak tagih), lalu dikurangi kewajiban (utang) untuk menampilkan Kekayaan Bersih (Net Estate Value) serta porsi pembagian untuk masing-masing ahli waris.",
+            "Halaman ini merangkum seluruh isi brankas keluarga secara otomatis. Sistem menjumlahkan perkiraan nilai dokumen aset ditambah uang piutang (hak tagih keluarga), lalu dikurangi tanggungan utang untuk menampilkan Total Harta Bersih Keluarga beserta pembagian per ahli waris.",
         steps: [
             {
-                title: "1. Evaluasi Kartu Kekayaan Bersih",
-                desc: "Periksa total nilai aset dokumen, total piutang yang harus ditagih keluarga, serta kewajiban utang yang harus dilunasi terlebih dahulu.",
+                title: "1. Periksa Kartu Total Harta Bersih",
+                desc: "Amati rincian gabungan nilai dokumen sertifikat/BPKB, daftar uang piutang yang harus ditagih, serta kewajiban utang yang harus dilunasi.",
             },
             {
-                title: "2. Tinjau Porsi Masing-Masing Ahli Waris",
-                desc: "Lihat tabel distribusi untuk memastikan setiap istri/anak sudah mendapatkan alokasi dokumen, PIN kredensial, dan amanat yang adil.",
+                title: "2. Cek Peringatan Dokumen yang Belum Dibagi",
+                desc: 'Jika muncul kotak peringatan kuning, klik "Atur Penerima Sekarang" untuk menentukan ahli waris pada dokumen yang masih kosong.',
             },
             {
-                title: "3. Cek Berkas yang Belum Dialokasikan",
-                desc: 'Jika masih ada indikator dokumen yang "Belum Dialokasikan", Anda dapat kembali ke menu Brankas Dokumen untuk mengatur penerimanya.',
+                title: "3. Klik Angka pada Tabel Pembagian Keluarga",
+                desc: "Anda dapat mengklik langsung tombol jumlah Berkas, Akun/PIN, atau Pesan pada baris nama keluarga untuk membuka daftar aset milik orang tersebut.",
             },
             {
                 title: '4. Buka & Cetak "Surat Induk Warisan"',
-                desc: 'Klik tombol "Buka Surat Induk Warisan" di kanan atas untuk menghasilkan naskah surat resmi yang merangkum seluruh harta dan panduan klaim bagi keluarga/notaris.',
+                desc: 'Tekan tombol emas "Buka & Cetak Surat Induk" di kanan atas untuk mencetak dokumen rekapitulasi resmi berformat A4.',
             },
         ],
-        tips: "Anda dapat mencetak Surat Induk Warisan ini secara berkala atau menyimpannya sebagai PDF untuk dititipkan kepada Notaris kepercayaan keluarga.",
+        tips: "Cetak atau simpan Surat Induk Warisan sebagai PDF setiap kali Anda selesai memperbarui data harta penting.",
+    },
+    dashboard: {
+        title: "Lemari Dokumen & Sertifikat",
+        subtitle: "Penyimpanan Berkas Berharga Terenkripsi AES-256",
+        icon: FolderLock,
+        purpose:
+            "Berfungsi sebagai lemari besi utama untuk menyimpan salinan digital dari dokumen berharga seperti Sertifikat Hak Milik (SHM) Tanah, BPKB Kendaraan, Akta Notaris, hingga Surat Berharga. Setiap file otomatis dikunci dengan sandi AES-256.",
+        steps: [
+            {
+                title: '1. Klik Tombol "+ Simpan Dokumen Baru"',
+                desc: "Tekan tombol biru di pojok kanan atas halaman untuk membuka formulir penyimpanan berkas.",
+            },
+            {
+                title: "2. Isi Nama Dokumen, Jenis & Nomor Surat",
+                desc: 'Masukkan nama aset yang mudah dikenali keluarga (contoh: "SHM Rumah Palu Timur"), pilih jenis dokumen, dan ketik nomor sertifikatnya.',
+            },
+            {
+                title: "3. Pilih Penerima Waris & Perkiraan Nilai",
+                desc: "Tentukan siapa anggota keluarga yang berhak menerima aset tersebut, isi perkiraan nilai pasarnya (Rupiah), serta tulis alamat/lokasi fisiknya.",
+            },
+            {
+                title: "4. Unggah File & Catat Lokasi Map Asli",
+                desc: 'Pilih file PDF/JPG/PNG (maks. 5 MB), tulis petunjuk letak berkas fisik aslinya di rumah, lalu klik "Simpan ke Brankas".',
+            },
+        ],
+        tips: 'Daftarkan nama istri/anak terlebih dahulu di menu "Keluarga & Ahli Waris" agar namanya langsung muncul di pilihan penerima waris.',
     },
     beneficiaries: {
-        title: "Manajemen Ahli Waris & Penerima Wasiat",
-        subtitle: "Direktori Keluarga, Kuasa Hukum & Pemetaan Hak Waris",
+        title: "Keluarga & Ahli Waris",
+        subtitle: "Daftar Penerima Hak Waris & Kuasa Hukum Keluarga",
         icon: Users,
         purpose:
-            "Halaman ini digunakan untuk mendaftarkan anggota keluarga inti (Istri, Anak Kandung, Saudara) maupun Notaris/Kuasa Hukum yang berhak menerima distribusi aset dan amanat dari brankas Pak Nyoman.",
+            "Digunakan untuk mendaftarkan identitas anggota keluarga inti (Istri/Suami, Anak Kandung, Kerabat) maupun Notaris yang berhak menerima pembagian dokumen aset, akses rekening, dan pesan wasiat.",
         steps: [
             {
-                title: '1. Klik Tombol "+ Tambah Ahli Waris"',
-                desc: "Buka formulir pendaftaran penerima wasiat di pojok kanan atas halaman.",
+                title: '1. Klik "+ Tambah Anggota Keluarga"',
+                desc: "Buka formulir pendaftaran keluarga di pojok kanan atas halaman.",
             },
             {
-                title: "2. Lengkapi Identitas Sesuai KTP",
-                desc: "Masukkan Nama Lengkap, pilih status hubungan keluarga (Istri/Suami, Anak, Saudara, atau Notaris), dan isi 16 digit NIK KTP (otomatis dienkripsi).",
+                title: "2. Lengkapi Nama, Hubungan & NIK KTP",
+                desc: "Masukkan nama lengkap sesuai KTP, pilih status hubungan keluarga, serta isi nomor NIK KTP dan nomor WhatsApp aktif.",
             },
             {
-                title: "3. Masukkan Kontak Aktif & Amanat Khusus",
-                desc: "Isi nomor WhatsApp/telepon dan email aktif untuk keperluan verifikasi notaris, lalu tuliskan pesan amanat pribadi untuk orang tersebut.",
+                title: "3. Tuliskan Pesan Wasiat Pribadi",
+                desc: "Isi pesan atau amanat khusus untuk anggota keluarga tersebut yang nantinya akan ikut tercetak di Surat Induk Warisan.",
             },
             {
-                title: "4. Pantau Portofolio Warisan per Orang",
-                desc: 'Klik tombol "Rincian" pada kartu ahli waris untuk melihat daftar lengkap sertifikat, BPKB, dan total nilai Rupiah yang diwariskan kepadanya.',
+                title: '4. Klik "Rincian Lengkap" pada Kartu Keluarga',
+                desc: "Pantau seluruh dokumen sertifikat, nomor rekening/PIN, dan surat wasiat yang diwariskan kepada orang tersebut dalam satu layar.",
             },
         ],
-        tips: 'Menghapus nama ahli waris tidak akan menghapus dokumen sertifikat Anda; dokumen tersebut hanya akan kembali berstatus "Belum Dialokasikan".',
+        tips: 'Menghapus nama anggota keluarga tidak akan menghapus file sertifikat Anda; status berkas hanya kembali menjadi "Belum Ditentukan".',
     },
     credentials: {
-        title: "Brankas Kredensial, Polis & PIN Rahasia",
-        subtitle:
-            "Penyimpanan Kode Akses Rekening, Asuransi & Kombinasi Brankas Fisik",
+        title: "Rekening, Polis & PIN",
+        subtitle: "Penyimpanan Nomor Rekening, Asuransi & Kunci Brankas Fisik",
         icon: KeyRound,
         purpose:
-            "Sering kali keluarga kesulitan mencairkan deposito, mengklaim asuransi jiwa, atau membuka brankas besi di rumah karena tidak mengetahui nomor polis dan kombinasi PIN-nya. Halaman ini menyimpan seluruh kode rahasia tersebut dengan enkripsi penuh.",
+            "Menyimpan informasi rahasia non-berkas seperti nomor rekening deposito, nomor polis asuransi jiwa, akun investasi, hingga kode kombinasi brankas besi di rumah atau Safe Deposit Box (SDB) bank.",
         steps: [
             {
-                title: '1. Klik "+ Simpan Kredensial Baru"',
-                desc: "Buka modal input kredensial rahasia di bagian kanan atas halaman.",
+                title: '1. Klik "+ Simpan Rekening / PIN"',
+                desc: "Buka formulir penyimpanan kode rahasia di kanan atas halaman.",
             },
             {
-                title: "2. Pilih Kategori & Institusi",
-                desc: "Pilih jenis kredensial (Rekening Bank, Polis Asuransi, Brankas Fisik/SDB, Investasi, atau Akun Digital) dan ketik nama bank/lokasinya.",
+                title: "2. Pilih Jenis Data & Nama Bank/Asuransi",
+                desc: "Pilih kategori (Rekening Bank, Polis Asuransi, Brankas Rumah/SDB, dll), pilih penerima warisnya, dan ketik nama bank atau lokasinya.",
             },
             {
-                title: "3. Masukkan Nomor Akun & PIN/Password",
-                desc: "Isi Nomor Rekening/Polis serta PIN atau kode kombinasi kunci. Seluruh karakter PIN akan disembunyikan dengan sensor titik-titik.",
+                title: "3. Masukkan Nomor Rekening/Polis & Kode PIN",
+                desc: "Ketik nomor rekening/polis beserta kode PIN atau putaran kunci brankas. Kode PIN otomatis disembunyikan dengan sensor titik-titik.",
             },
             {
-                title: "4. Tuliskan Panduan Klaim / Letak Kunci Fisik",
-                desc: "Jelaskan secara spesifik di mana kunci cadangan disimpan atau siapa nama petugas bank/agen asuransi yang harus dihubungi keluarga.",
+                title: "4. Catat Petunjuk Klaim & Letak Kunci Fisik",
+                desc: "Jelaskan di mana buku tabungan asli atau kunci cadangan disimpan serta siapa petugas bank/agen asuransi yang harus dihubungi.",
             },
         ],
-        tips: 'Gunakan ikon "Mata" pada kartu untuk mengintip PIN, atau klik ikon "Salin" untuk menyalin nomor rekening/PIN langsung ke clipboard.',
+        tips: 'Gunakan tombol "Lihat PIN" untuk mengintip kode sandi, atau klik "Salin" untuk menyalin nomor rekening dan PIN secara instan.',
     },
     testaments: {
-        title: "Surat Wasiat, Amanat & Catatan Piutang/Utang",
+        title: "Surat Wasiat & Piutang",
         subtitle:
-            "Arsip Pesan Terakhir, Suksesi Bisnis & Neraca Tagihan Keluarga",
+            "Pesan Wasiat Keluarga, Petunjuk Usaha & Catatan Utang-Piutang",
         icon: BookOpen,
         purpose:
-            "Halaman ini adalah tempat Pak Nyoman menuliskan surat wasiat naratif, instruksi kelanjutan bisnis keluarga, daftar piutang (uang Pak Nyoman yang dipinjam orang lain agar bisa ditagih keluarga), serta daftar kewajiban/utang yang harus diselesaikan.",
+            "Tempat menuliskan surat wasiat keluarga secara naratif, petunjuk kelanjutan usaha, daftar uang piutang (hak tagih keluarga kepada peminjam), serta daftar tanggungan utang yang wajib dilunasi.",
         steps: [
             {
-                title: '1. Klik "+ Tulis Amanat Baru"',
+                title: '1. Klik "+ Tulis Wasiat / Catatan"',
                 desc: "Tekan tombol di kanan atas untuk mulai menulis lembar wasiat atau catatan keuangan baru.",
             },
             {
-                title: "2. Pilih Kategori Amanat",
-                desc: "Pilih apakah catatan ini berupa Amanat Keluarga, Instruksi Bisnis, Catatan Piutang (Hak Tagih), atau Kewajiban/Utang.",
+                title: "2. Pilih Jenis Catatan & Penerima",
+                desc: "Pilih apakah catatan tersebut berupa Pesan Keluarga, Pesan Bisnis, Uang Piutang, atau Tanggungan Utang.",
             },
             {
-                title: "3. Isi Pihak Terkait & Nilai Nominal (Jika Ada)",
-                desc: "Jika mencatat piutang atau utang, tuliskan nama debitur/saksi dan jumlah nominal Rupiahnya agar terhitung otomatis di Ikhtisar Kekayaan.",
+                title: "3. Isi Nama Pihak/Saksi & Jumlah Rupiah",
+                desc: "Jika mencatat piutang atau utang, masukkan nama peminjam/saksi dan jumlah nominal Rupiahnya agar terhitung otomatis di Ringkasan Harta.",
             },
             {
-                title: "4. Baca & Cetak Lembar Resmi",
-                desc: 'Klik tombol "Baca & Cetak" pada kartu wasiat untuk membuka tampilan surat resmi yang siap dicetak ke kertas atau PDF.',
+                title: '4. Klik "Baca & Cetak Surat"',
+                desc: "Buka lembar surat resmi dari setiap catatan wasiat dan cetak langsung ke kertas A4 atau simpan sebagai PDF.",
             },
         ],
-        tips: "Pisahkan antara catatan Piutang dan Kewajiban Utang agar keluarga memiliki pedoman hukum dan finansial yang terang benderang.",
+        tips: 'Ubah status catatan menjadi "Sudah Lunas / Sudah Diselesaikan" apabila piutang atau utang tersebut telah beres.',
     },
     "security-center": {
-        title: "Pusat Keamanan & Integritas SHA-256",
-        subtitle: "Pemindai Keaslian File Fisik & Manajemen Perangkat 2FA",
+        title: "Cek Keamanan Berkas",
+        subtitle: "Pemeriksaan Keaslian File (SHA-256) & Pengaturan HP 2FA",
         icon: ShieldCheck,
         purpose:
-            "Memastikan tidak ada satu pun file terenkripsi di dalam server yang rusak, hilang, atau diubah secara diam-diam (tampering), sekaligus tempat mengelola perangkat Google Authenticator Anda.",
+            "Memastikan tidak ada satu pun file sertifikat di dalam server yang rusak atau berubah sejak pertama kali disimpan, sekaligus mengatur ulang Barcode QR Google Authenticator saat berganti HP.",
         steps: [
             {
-                title: '1. Klik "Pindai Integritas SHA-256"',
-                desc: "Sistem akan mendekripsi sementara setiap file di memori dan mencocokkan sidik jari digital (checksum SHA-256) dengan catatan asli saat diunggah.",
+                title: '1. Klik "Periksa Keaslian Seluruh Berkas"',
+                desc: 'Sistem akan memindai segel digital SHA-256 seluruh dokumen dan memastikan statusnya hijau "ASLI & UTUH".',
             },
             {
-                title: "2. Periksa Status Tabel Integritas",
-                desc: 'Pastikan seluruh dokumen berstatus hijau "TERVERIFIKASI UTUH".',
+                title: "2. Pantau Grafik Isi Lemari Dokumen",
+                desc: "Lihat rincian jumlah berkas dan kapasitas penyimpanan berdasarkan kategori dokumen.",
             },
             {
-                title: "3. Reset QR 2FA Saat Ganti HP Baru",
-                desc: 'Jika Anda mengganti smartphone, klik "Ganti Perangkat / Reset QR", masukkan password brankas, dan pindai QR Code baru.',
+                title: '3. Klik "Pindah HP / Buat Barcode QR Baru"',
+                desc: "Apabila Anda membeli HP baru, tekan tombol ini, masukkan kata sandi brankas, lalu pindai Barcode QR baru di HP baru Anda.",
             },
         ],
-        tips: "Lakukan pemindaian integritas secara berkala setelah mengunggah dokumen-dokumen berharga baru.",
+        tips: "Lakukan pemeriksaan keaslian berkas secara berkala setelah mengunggah dokumen-dokumen penting.",
     },
     "activity-logs": {
-        title: "Riwayat Aktivitas & Audit Trail",
-        subtitle: "Kotak Hitam (Blackbox) Perekam Jejak Akses Real-Time",
+        title: "Catatan Riwayat Akses",
+        subtitle: "Rekaman Transparan Siapa & Kapan Membuka Brankas",
         icon: Activity,
         purpose:
-            "Mencatat setiap aktivitas yang terjadi di dalam brankas tanpa terkecuali—mulai dari login, percobaan OTP 2FA yang gagal, hingga siapa dan kapan sebuah dokumen dilihat atau diunduh.",
+            "Mencatat seluruh aktivitas di dalam brankas secara otomatis—mulai dari waktu masuk akun, penambahan data, pembukaan dokumen, pengunduhan sertifikat, hingga peringatan salah kode OTP.",
         steps: [
             {
-                title: "1. Gunakan Filter Kategori Log",
-                desc: 'Saring catatan berdasarkan "Akses Dokumen", "Keamanan & 2FA", atau "Peringatan Kritis" untuk mendeteksi aktivitas mencurigakan.',
+                title: "1. Pilih Filter Kategori Riwayat",
+                desc: 'Saring catatan berdasarkan "Aktivitas Dokumen & Harta", "Riwayat Masuk & OTP", atau "Peringatan Penting".',
             },
             {
-                title: "2. Periksa Alamat IP & Jenis Perangkat",
-                desc: "Amati kolom IP Address dan sistem operasi/browser yang mengakses brankas Anda.",
+                title: "2. Periksa Perangkat & Alamat IP",
+                desc: "Amati jenis perangkat (HP/Laptop) dan browser yang digunakan saat mengakses brankas.",
             },
             {
-                title: '3. Klik "Detail" untuk Inspeksi Teknis',
-                desc: "Tekan tombol Detail di sebelah kanan baris tabel untuk melihat waktu presisi hingga detik beserta kode checksum SHA-256 berkas.",
+                title: '3. Klik "Lihat Bukti" pada Baris Tabel',
+                desc: "Buka rincian lengkap aktivitas beserta jam presisi hingga satuan detik dan kode segel SHA-256 berkas.",
             },
         ],
-        tips: "Log audit ini bersifat permanen (immutable) dan tidak dapat dihapus dari antarmuka pengguna demi menjamin keabsahan forensik.",
+        tips: "Catatan riwayat ini bersifat permanen dan tidak dapat dihapus demi menjamin keamanan audit keluarga.",
+    },
+    "user-access": {
+        title: "Manajemen Akses Akun (Backdoor)",
+        subtitle: "Gerbang Eksklusif Pembuatan & Pencabutan Akun Login Brankas",
+        icon: UserPlus,
+        purpose:
+            "Karena pendaftaran publik ditutup demi keamanan tingkat tinggi, halaman ini adalah satu-satunya tempat bagi Pemilik Brankas untuk membuatkan akun login baru bagi anggota keluarga atau notaris kepercayaan, mengganti kata sandi mereka, atau mencabut hak akses sewaktu-waktu.",
+        steps: [
+            {
+                title: '1. Klik Tombol "+ Buka Akses Baru"',
+                desc: "Tekan tombol biru di pojok kanan atas untuk mendaftarkan pengguna baru yang diizinkan masuk ke sistem brankas.",
+            },
+            {
+                title: "2. Isi Nama, Email Login & Kata Sandi Awal",
+                desc: 'Masukkan nama lengkap pengguna, alamat email aktif, dan buatkan kata sandi awal (minimal 8 karakter) lalu klik "Beri Akses Sistem".',
+            },
+            {
+                title: "3. Pandu Keluarga Saat Login Pertama Kali",
+                desc: "Berikan email dan sandi awal tersebut kepada keluarga. Saat mereka login pertama kali, sistem otomatis mewajibkan mereka memindai Barcode QR Google Authenticator di HP mereka masing-masing.",
+            },
+            {
+                title: "4. Edit Sandi atau Cabut Akses Kapan Saja",
+                desc: 'Gunakan tombol "Edit Sandi" jika anggota keluarga lupa kata sandi, atau klik "Cabut Akses" untuk menutup akses login mereka secara permanen.',
+            },
+        ],
+        tips: 'Pantau kolom "Status Pengaman 2FA" pada tabel untuk memastikan akun keluarga yang baru dibuat sudah berstatus hijau "Aktif Terhubung".',
     },
     profile: {
-        title: "Pengaturan Profil & Kata Sandi Utama",
-        subtitle: "Manajemen Identitas Pemilik Brankas & Kredensial Login",
+        title: "Profil & Ganti Sandi",
+        subtitle: "Pengaturan Identitas Pemilik Utama & Kata Sandi Brankas",
         icon: UserCog,
         purpose:
-            "Mengelola data identitas utama pemilik brankas (Nama Lengkap sesuai KTP, Email, Nomor HP) serta memperbarui kata sandi utama (Master Password) brankas.",
+            "Mengelola data identitas resmi pemilik brankas (Nama sesuai KTP, Email, Nomor HP, dan NIK) yang akan tercetak otomatis pada Surat Induk Warisan, serta mengganti kata sandi utama.",
         steps: [
             {
-                title: "1. Perbarui Informasi Identitas",
-                desc: 'Ubah nama, email, atau nomor kontak pada panel pertama lalu klik "Simpan Profil".',
+                title: "1. Perbarui Identitas Diri Pemilik",
+                desc: 'Lengkapi nama lengkap, email, nomor WhatsApp, dan NIK KTP pada bagian pertama lalu klik "Simpan Perubahan Identitas".',
             },
             {
-                title: "2. Rotasi Kata Sandi Berkala",
-                desc: "Masukkan password saat ini dan password baru minimal 8 karakter kombinasi huruf dan angka pada panel kedua.",
+                title: "2. Ganti Kata Sandi Utama Secara Berkala",
+                desc: "Masukkan kata sandi lama dan kata sandi baru minimal 8 karakter pada bagian kedua.",
             },
         ],
-        tips: "Gunakan kata sandi yang unik dan berbeda dari password email atau media sosial Anda.",
+        tips: "Gunakan kata sandi utama yang kuat dan berbeda dari kata sandi media sosial atau email harian Anda.",
     },
 };
 
@@ -224,6 +250,7 @@ export default function PageGuideModal({
         if (url.startsWith("/testaments")) return "testaments";
         if (url.startsWith("/security-center")) return "security-center";
         if (url.startsWith("/activity-logs")) return "activity-logs";
+        if (url.startsWith("/user-access")) return "user-access";
         if (url.startsWith("/profile")) return "profile";
         return "dashboard";
     };
@@ -243,19 +270,17 @@ export default function PageGuideModal({
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-slate-900/75 backdrop-blur-md transition-all duration-300">
-            <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.65)] w-full max-w-4xl overflow-hidden border border-white/50 flex flex-col max-h-[92vh] animate-in zoom-in-95 fade-in duration-300">
+            <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.65)] w-full max-w-4xl overflow-hidden border border-white/60 flex flex-col max-h-[92vh] animate-in zoom-in-95 fade-in duration-300">
                 {/* Header Surat Panduan */}
-                <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white shrink-0">
+                <div className="flex justify-between items-center p-6 sm:p-7 border-b border-slate-100 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white shrink-0">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-sky-500/20 border border-sky-400/30 text-sky-300 rounded-2xl">
                             <HelpCircle size={26} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <span className="px-2.5 py-0.5 rounded-md bg-sky-500/20 text-sky-300 text-[10px] font-black uppercase tracking-widest border border-sky-400/20">
-                                    Dokumen Panduan & SOP Resmi
-                                </span>
-                            </div>
+                            <span className="px-2.5 py-0.5 rounded-md bg-sky-500/20 text-sky-300 text-[10px] font-black uppercase tracking-widest border border-sky-400/20">
+                                Lembar Panduan & SOP Resmi
+                            </span>
                             <h2 className="text-xl font-black tracking-tight mt-1">
                                 Petunjuk Penggunaan & Langkah Input SafeDoc
                             </h2>
@@ -357,7 +382,7 @@ export default function PageGuideModal({
                             </div>
                         </div>
 
-                        {/* Bagian 3: Tips Keamanan Pak Nyoman */}
+                        {/* Bagian 3: Tips Keamanan */}
                         <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-start gap-3">
                             <Lock
                                 size={18}
@@ -365,7 +390,7 @@ export default function PageGuideModal({
                             />
                             <div className="text-xs font-semibold text-amber-900 leading-relaxed">
                                 <strong className="font-black uppercase tracking-wider block mb-0.5">
-                                    Catatan Penting & Rekomendasi Terbaik:
+                                    Tips Penting untuk Pemilik Brankas:
                                 </strong>
                                 {guide.tips}
                             </div>

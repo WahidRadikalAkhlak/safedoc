@@ -11,6 +11,7 @@ import {
     UserCog,
     LogOut,
     HelpCircle,
+    UserPlus,
 } from "lucide-react";
 
 export default function Sidebar({ onOpenGuide }) {
@@ -76,8 +77,15 @@ export default function Sidebar({ onOpenGuide }) {
                     icon: Activity,
                 },
                 {
+                    name: "Manajemen Akses Akun",
+                    subtitle: "Pendaftaran Akun Baru",
+                    href: "/user-access",
+                    active: url.startsWith("/user-access"),
+                    icon: UserPlus,
+                },
+                {
                     name: "Profil & Ganti Sandi",
-                    subtitle: "Identitas Pemilik",
+                    subtitle: "Identitas Pemilik Utama",
                     href: "/profile",
                     active: url.startsWith("/profile"),
                     icon: UserCog,
@@ -155,7 +163,6 @@ export default function Sidebar({ onOpenGuide }) {
                 ))}
             </div>
 
-            {/* Footer Bantuan & Kunci Brankas */}
             <div className="p-4 border-t border-slate-100 space-y-2 bg-slate-50/50">
                 {onOpenGuide && (
                     <button
@@ -167,7 +174,6 @@ export default function Sidebar({ onOpenGuide }) {
                         Petunjuk Pemakaian Halaman
                     </button>
                 )}
-
                 <Link
                     href="/logout"
                     method="post"

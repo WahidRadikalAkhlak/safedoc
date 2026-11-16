@@ -2,7 +2,7 @@ import React from "react";
 import { Head, useForm, Link } from "@inertiajs/react";
 import { QrCode, Smartphone, CheckCircle2, LogOut } from "lucide-react";
 
-export default function TwoFactorSetup({ qrCodeSvg, secret }) {
+export default function TwoFactorSetup({ qrCodeSvg, qrCodeUrl, secret }) {
     const { data, setData, post, processing, errors } = useForm({
         code: "",
     });
@@ -11,6 +11,10 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
         e.preventDefault();
         post("/2fa/enable");
     };
+
+    const qrImageSrc = qrCodeSvg
+        ? `data:image/svg+xml;base64,${qrCodeSvg}`
+        : `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrCodeUrl || "")}`;
 
     return (
         <div className="min-h-screen bg-slate-950 font-['Plus_Jakarta_Sans',sans-serif] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
@@ -47,13 +51,13 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-200/60">
                             <img
-                                src={`data:image/svg+xml;base64,${qrCodeSvg}`}
+                                src={qrImageSrc}
                                 alt="QR Code 2FA"
                                 className="w-48 h-48 object-contain rounded-xl bg-white p-2 shadow-sm"
                             />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-3">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-3 text-center">
                                 Kode Manual:{" "}
-                                <strong className="text-slate-700 font-mono">
+                                <strong className="text-slate-800 font-mono select-all block mt-0.5 text-xs">
                                     {secret}
                                 </strong>
                             </span>
@@ -64,19 +68,20 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
                                 <Smartphone size={13} /> Cara Menghubungkan HP:
                             </div>
                             <p>
-                                <strong>1.</strong> Unduh aplikasi{" "}
-                                <strong>Google Authenticator</strong> di Play
-                                Store (Android) atau App Store (iPhone).
+                                <strong>1.</strong> Buka aplikasi{" "}
+                                <strong>Google Authenticator</strong> di HP
+                                Anda.
                             </p>
                             <p>
-                                <strong>2.</strong> Buka aplikasinya, tekan
-                                tombol <strong>"+" (Tambah)</strong> lalu pilih{" "}
+                                <strong>2.</strong> Tekan tombol{" "}
+                                <strong>"+" (Tambah)</strong> lalu pilih{" "}
                                 <strong>"Pindai Kode QR"</strong>.
                             </p>
                             <p>
-                                <strong>3.</strong> Arahkan kamera HP Anda ke
-                                kotak Barcode di samping, lalu masukkan 6 angka
-                                yang muncul pada kolom di bawah ini.
+                                <strong>3.</strong> Arahkan kamera HP ke kotak
+                                Barcode di samping (atau ketik{" "}
+                                <em>Kode Manual</em> di bawahnya), lalu masukkan
+                                6 angka yang muncul pada kolom di bawah ini.
                             </p>
                         </div>
                     </div>
@@ -103,6 +108,7 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
                             placeholder="000000"
                             className="w-full text-center text-2xl tracking-[0.5em] font-mono font-black py-3.5 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:bg-white focus:ring-4 focus:ring-sky-500/15 focus:border-sky-500 outline-none transition"
                             required
+                            autoFocus
                         />
                         {errors.code && (
                             <p className="text-rose-600 text-xs font-extrabold text-center">
@@ -113,7 +119,7 @@ export default function TwoFactorSetup({ qrCodeSvg, secret }) {
                         <button
                             type="submit"
                             disabled={processing || data.code.length !== 6}
-                            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-lg transition disabled:opacity-50"
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 shadow-lg transition disabled:opacity-50 cursor-pointer"
                         >
                             <CheckCircle2 size={18} />
                             {processing

@@ -45,11 +45,9 @@ export default function Welcome() {
         <div className="min-h-screen bg-slate-950 text-white font-['Plus_Jakarta_Sans',sans-serif] relative overflow-hidden flex flex-col justify-between">
             <Head title="SafeDoc — Brankas Digital & Arsip Warisan Keluarga" />
 
-            {/* Efek Cahaya Latar */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-sky-500/15 rounded-full blur-[130px] pointer-events-none"></div>
             <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] bg-amber-500/10 rounded-full blur-[130px] pointer-events-none"></div>
 
-            {/* Navbar Atas */}
             <header className="max-w-7xl w-full mx-auto px-6 py-6 flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-3">
                     <img
@@ -71,25 +69,16 @@ export default function Welcome() {
                             Buka Ruang Brankas <ArrowRight size={15} />
                         </Link>
                     ) : (
-                        <>
-                            <Link
-                                href="/login"
-                                className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition"
-                            >
-                                Masuk Brankas
-                            </Link>
-                            <Link
-                                href="/register"
-                                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 text-white font-black text-xs shadow-lg transition"
-                            >
-                                Buat Brankas Baru
-                            </Link>
-                        </>
+                        <Link
+                            href="/login"
+                            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-110 text-white font-black text-xs shadow-lg transition"
+                        >
+                            Masuk Brankas
+                        </Link>
                     )}
                 </div>
             </header>
 
-            {/* Konten Hero Tengah */}
             <main className="max-w-7xl w-full mx-auto px-6 py-12 lg:py-16 relative z-10 space-y-14">
                 <div className="text-center max-w-3xl mx-auto space-y-6">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-extrabold uppercase tracking-widest">
@@ -132,7 +121,6 @@ export default function Welcome() {
                     </div>
                 </div>
 
-                {/* 4 Kartu Pilar Utama */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((item, idx) => {
                         const Icon = item.icon;
@@ -158,7 +146,6 @@ export default function Welcome() {
                 </div>
             </main>
 
-            {/* Footer */}
             <footer className="max-w-7xl w-full mx-auto px-6 py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 relative z-10">
                 <div className="flex items-center gap-2 font-bold text-emerald-400">
                     <ShieldCheck size={16} /> Enkripsi Militer AES-256 • Segel
@@ -166,6 +153,7 @@ export default function Welcome() {
                 </div>
                 <span>
                     © {new Date().getFullYear()} SafeDoc Personal Estate Vault.
+                    Pendaftaran Tertutup.
                 </span>
             </footer>
         </div>

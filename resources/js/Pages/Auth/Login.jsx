@@ -1,6 +1,6 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Lock, Mail, KeyRound, ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
+import { Lock, Mail, KeyRound, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,19 +24,7 @@ export default function Login({ status, canResetPassword }) {
             <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
             <div className="w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,0,0,0.5)] overflow-hidden border border-white/80 relative z-10">
-                {/* Header Kartu Login */}
-                <div className="p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white text-center space-y-3 relative">
-                    {/* Baris Tombol Navigasi Atas */}
-                    <div className="flex items-center justify-start mb-2">
-                        <Link
-                            href="/"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-sky-200 hover:text-white transition"
-                        >
-                            <ArrowLeft size={14} />
-                            Kembali ke Beranda
-                        </Link>
-                    </div>
-
+                <div className="p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white text-center space-y-3">
                     <Link
                         href="/"
                         className="inline-block bg-white px-4 py-2 rounded-2xl shadow-md"
@@ -47,7 +35,6 @@ export default function Login({ status, canResetPassword }) {
                             className="h-9 w-auto"
                         />
                     </Link>
-
                     <div>
                         <span className="text-[10px] font-black uppercase tracking-widest text-sky-300 block">
                             Pintu Keamanan Tahap 1
@@ -56,12 +43,12 @@ export default function Login({ status, canResetPassword }) {
                             Buka Brankas Pribadi Anda
                         </h1>
                         <p className="text-xs font-medium text-slate-300 mt-1">
-                            Masukkan alamat email dan kata sandi utama brankas Anda.
+                            Masukkan alamat email dan kata sandi utama brankas
+                            Anda.
                         </p>
                     </div>
                 </div>
 
-                {/* Form Login */}
                 <form onSubmit={submit} className="p-8 space-y-5 bg-white">
                     {status && (
                         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700">
@@ -71,7 +58,7 @@ export default function Login({ status, canResetPassword }) {
 
                     <div>
                         <label className="block text-sm font-extrabold text-slate-800 mb-2">
-                            Alamat Email Pemilik Brankas
+                            Alamat Email Pengguna
                         </label>
                         <div className="relative">
                             <Mail
@@ -81,7 +68,9 @@ export default function Login({ status, canResetPassword }) {
                             <input
                                 type="email"
                                 value={data.email}
-                                onChange={(e) => setData("email", e.target.value)}
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
                                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
                                 placeholder="nama@email.com"
                                 required
@@ -117,7 +106,9 @@ export default function Login({ status, canResetPassword }) {
                             <input
                                 type="password"
                                 value={data.password}
-                                onChange={(e) => setData("password", e.target.value)}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
                                 className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:bg-white focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 outline-none transition"
                                 placeholder="••••••••••••"
                                 required
@@ -135,7 +126,9 @@ export default function Login({ status, canResetPassword }) {
                             <input
                                 type="checkbox"
                                 checked={data.remember}
-                                onChange={(e) => setData("remember", e.target.checked)}
+                                onChange={(e) =>
+                                    setData("remember", e.target.checked)
+                                }
                                 className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                             />
                             <span className="text-xs font-bold text-slate-600">
@@ -156,16 +149,11 @@ export default function Login({ status, canResetPassword }) {
                         <ArrowRight size={17} />
                     </button>
 
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
                         <span className="flex items-center gap-1.5 text-emerald-600">
-                            <ShieldCheck size={15} /> Terlindungi AES-256
+                            <ShieldCheck size={15} /> Pintu Pendaftaran Publik
+                            Ditutup (Sistem Eksklusif)
                         </span>
-                        <Link
-                            href="/register"
-                            className="text-sky-600 hover:underline font-extrabold"
-                        >
-                            Belum punya brankas? Daftar
-                        </Link>
                     </div>
                 </form>
             </div>
