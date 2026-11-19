@@ -4,6 +4,7 @@ import {
     HelpCircle,
     FolderLock,
     Briefcase,
+    Film,
     Users,
     KeyRound,
     BookOpen,
@@ -95,6 +96,33 @@ const GUIDES = {
             },
         ],
         tips: "Pastikan TMT dan pangkat/golongan terisi rapi agar tabel rekapitulasi riwayat kepegawaian terlihat lengkap saat dicetak ke PDF.",
+    },
+    memories: {
+        title: "Foto & Video Kenangan",
+        subtitle:
+            "Penyimpanan Privat Momen Keluarga, Acara Spesial & Pesan Video",
+        icon: Film,
+        purpose:
+            "Halaman ini menyediakan ruang penyimpanan pribadi untuk mengamankan foto dan video kenangan keluarga—seperti momen kumpul keluarga, acara spesial, perjalanan berkesan, maupun rekaman pesan hangat untuk keluarga—agar tidak tersebar sembarangan dan tetap terjaga di dalam brankas.",
+        steps: [
+            {
+                title: '1. Klik Tombol "+ Simpan Foto / Video"',
+                desc: "Tekan tombol di kanan atas untuk membuka formulir unggah kenangan baru.",
+            },
+            {
+                title: "2. Isi Judul, Kategori & Anggota Keluarga Terkait",
+                desc: "Beri judul momen yang jelas, pilih kategori kenangan, dan tautkan ke anggota keluarga tertentu jika momen tersebut khusus untuknya.",
+            },
+            {
+                title: "3. Cantumkan Tanggal & Lokasi Momen",
+                desc: "Isi tanggal kejadian dan lokasi tempat foto atau video diambil agar mudah dicari kembali di kemudian hari.",
+            },
+            {
+                title: "4. Pilih File Foto/Video & Tulis Cerita Singkat",
+                desc: 'Unggah file foto (JPG, PNG, WEBP) atau video (MP4, MOV, WEBM) maksimal 50 MB, tuliskan cerita atau pesan di baliknya, lalu klik "Simpan Kenangan".',
+            },
+        ],
+        tips: 'Gunakan filter "Hanya Foto" atau "Hanya Video" di bar pencarian untuk menyaring koleksi media dengan cepat.',
     },
     beneficiaries: {
         title: "Keluarga & Ahli Waris",
@@ -273,6 +301,7 @@ export default function PageGuideModal({
     const detectKeyFromUrl = (url) => {
         if (url.startsWith("/estate-summary")) return "estate-summary";
         if (url.startsWith("/personnel-records")) return "personnel-records";
+        if (url.startsWith("/memories")) return "memories";
         if (url.startsWith("/beneficiaries")) return "beneficiaries";
         if (url.startsWith("/credentials")) return "credentials";
         if (url.startsWith("/testaments")) return "testaments";

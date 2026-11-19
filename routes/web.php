@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EstateSummaryController;
+use App\Http\Controllers\MemoryItemController;
 use App\Http\Controllers\PersonnelRecordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityCenterController;
@@ -33,10 +34,14 @@ Route::middleware(['auth', 'verified', '2fa'])->group(function () {
     Route::get('documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 
-    // Rute Baru: Arsip Kepegawaian & Backup SIMPEG
     Route::resource('personnel-records', PersonnelRecordController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('personnel-records/{personnelRecord}/preview', [PersonnelRecordController::class, 'preview'])->name('personnel-records.preview');
     Route::get('personnel-records/{personnelRecord}/download', [PersonnelRecordController::class, 'download'])->name('personnel-records.download');
+
+    // Rute Baru: Galeri Foto & Video Kenangan Keluarga
+    Route::resource('memories', MemoryItemController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('memories/{memory}/preview', [MemoryItemController::class, 'preview'])->name('memories.preview');
+    Route::get('memories/{memory}/download', [MemoryItemController::class, 'download'])->name('memories.download');
 
     Route::resource('beneficiaries', BeneficiaryController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('credentials', VaultCredentialController::class)->only(['index', 'store', 'update', 'destroy']);

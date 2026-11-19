@@ -13,6 +13,7 @@ import {
     HelpCircle,
     UserPlus,
     Briefcase,
+    Film,
 } from "lucide-react";
 
 export default function Sidebar({ onOpenGuide }) {
@@ -43,6 +44,13 @@ export default function Sidebar({ onOpenGuide }) {
                     href: "/personnel-records",
                     active: url.startsWith("/personnel-records"),
                     icon: Briefcase,
+                },
+                {
+                    name: "Foto & Video Kenangan",
+                    subtitle: "Momen & Pesan Keluarga",
+                    href: "/memories",
+                    active: url.startsWith("/memories"),
+                    icon: Film,
                 },
                 {
                     name: "Keluarga & Ahli Waris",
