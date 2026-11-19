@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use PragmaRX\Google2FA\Google2FA;
 use Inertia\Inertia;
@@ -25,11 +26,15 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            // 'rfc,dns' memastikan domain email valid dan punya mail server aktif
+            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:' . User::class],
             'phone_number' => ['required', 'string', 'max:20'],
             'nik' => ['required', 'string', 'size:16'],
             'address' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'email.email' => 'Masukkan alamat email aktif yang valid (contoh: nama@gmail.com).',
+            'email.unique' => 'Email ini sudah terdaftar di SafeDoc.',
         ]);
 
         // Generate Kunci Rahasia 2FA
@@ -47,10 +52,16 @@ class RegisteredUserController extends Controller
             'google2fa_enabled' => false,
         ]);
 
-        event(new Registered($user));
+        // Mengirim email verifikasi otomatis ke Gmail pendaftar
+        try {
+            event(new Registered($user));
+        } catch (\Exception $e) {
+            Log::error('Gagal mengirim email verifikasi registrasi: ' . $e->getMessage());
+        }
+
         Auth::login($user);
 
-        // Arahkan langsung ke halaman konfigurasi 2FA Authenticator
+        // Arahkan ke halaman konfigurasi 2FA Authenticator
         return redirect()->route('2fa.setup');
     }
 }

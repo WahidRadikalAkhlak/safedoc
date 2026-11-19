@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $secretKey = $google2fa->generateSecretKey();
 
         User::updateOrCreate(
-            ['email' => 'ullulazmia.l@gmail.com'],
+            ['email' => 'wahidradikal@gmail.com'],
             [
                 'name' => 'Pemilik Brankas SafeDoc',
                 'password' => Hash::make('password'),
