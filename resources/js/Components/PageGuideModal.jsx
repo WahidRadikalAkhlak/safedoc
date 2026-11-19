@@ -3,6 +3,7 @@ import {
     X,
     HelpCircle,
     FolderLock,
+    Briefcase,
     Users,
     KeyRound,
     BookOpen,
@@ -38,7 +39,7 @@ const GUIDES = {
             },
             {
                 title: '4. Buka & Cetak "Surat Induk Warisan"',
-                desc: 'Tekan tombol emas "Buka & Cetak Surat Induk" di kanan atas untuk mencetak dokumen rekapitulasi resmi berformat A4.',
+                desc: 'Tekan tombol emas "Buka & Cetak Surat Induk" di kanan atas untuk mencetak dokumen rekapitulasi resmi siap cetak berukuran A4.',
             },
         ],
         tips: "Cetak atau simpan Surat Induk Warisan sebagai PDF setiap kali Anda selesai memperbarui data harta penting.",
@@ -68,6 +69,32 @@ const GUIDES = {
             },
         ],
         tips: 'Daftarkan nama istri/anak terlebih dahulu di menu "Keluarga & Ahli Waris" agar namanya langsung muncul di pilihan penerima waris.',
+    },
+    "personnel-records": {
+        title: "Arsip Kepegawaian (SIMPEG)",
+        subtitle: "Cadangan SK Pangkat, Jabatan, KGB & Cetak PDF Riwayat",
+        icon: Briefcase,
+        purpose:
+            "Halaman ini berfungsi sebagai brankas cadangan data kepegawaian agar apabila server SIMPEG pusat mengalami gangguan atau sedang dalam perawatan, seluruh SK, riwayat pangkat/jabatan, dan file scan tetap aman terenkripsi serta siap dicetak menjadi PDF kapan saja.",
+        steps: [
+            {
+                title: '1. Klik Tombol "+ Tambah Berkas SK"',
+                desc: "Tekan tombol biru di pojok kanan atas untuk membuka formulir penyimpanan arsip kepegawaian baru.",
+            },
+            {
+                title: "2. Isi Nama SK, Jenis & Nomor Keputusan",
+                desc: "Pilih kategori dokumen (SK CPNS/PNS, SK Pangkat, SK Jabatan, KGB, atau Diklat/Sertifikat), lalu masukkan judul dan nomor SK-nya.",
+            },
+            {
+                title: "3. Lengkapi TMT, Pangkat/Golongan & Jabatan",
+                desc: "Isi tanggal penetapan, TMT (Terhitung Mulai Tanggal), pangkat/golongan ruang, jabatan/unit kerja, serta instansi yang menetapkan.",
+            },
+            {
+                title: "4. Unggah File Scan & Cetak Rekap PDF",
+                desc: 'Lampirkan file scan SK (PDF/JPG/PNG) jika ada, lalu gunakan tombol "Unduh PDF" per berkas atau "Cetak / Download PDF Rekap Riwayat" untuk mencetak seluruh riwayat kepegawaian.',
+            },
+        ],
+        tips: "Pastikan TMT dan pangkat/golongan terisi rapi agar tabel rekapitulasi riwayat kepegawaian terlihat lengkap saat dicetak ke PDF.",
     },
     beneficiaries: {
         title: "Keluarga & Ahli Waris",
@@ -245,6 +272,7 @@ export default function PageGuideModal({
 }) {
     const detectKeyFromUrl = (url) => {
         if (url.startsWith("/estate-summary")) return "estate-summary";
+        if (url.startsWith("/personnel-records")) return "personnel-records";
         if (url.startsWith("/beneficiaries")) return "beneficiaries";
         if (url.startsWith("/credentials")) return "credentials";
         if (url.startsWith("/testaments")) return "testaments";

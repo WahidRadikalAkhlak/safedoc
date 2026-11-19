@@ -12,6 +12,7 @@ import {
     LogOut,
     HelpCircle,
     UserPlus,
+    Briefcase,
 } from "lucide-react";
 
 export default function Sidebar({ onOpenGuide }) {
@@ -35,6 +36,13 @@ export default function Sidebar({ onOpenGuide }) {
                     active:
                         url === "/dashboard" || url.startsWith("/documents"),
                     icon: FolderLock,
+                },
+                {
+                    name: "Arsip Kepegawaian",
+                    subtitle: "Backup SK & SIMPEG",
+                    href: "/personnel-records",
+                    active: url.startsWith("/personnel-records"),
+                    icon: Briefcase,
                 },
                 {
                     name: "Keluarga & Ahli Waris",
@@ -96,7 +104,6 @@ export default function Sidebar({ onOpenGuide }) {
 
     return (
         <aside className="w-72 bg-white/90 backdrop-blur-2xl border-r border-slate-200/80 flex flex-col h-screen sticky top-0 shadow-[8px_0_30px_rgba(0,0,0,0.03)] z-40">
-            {/* Logo Brankas */}
             <div className="p-6 border-b border-slate-100 flex items-center justify-between h-20">
                 <Link
                     href="/estate-summary"
@@ -113,7 +120,6 @@ export default function Sidebar({ onOpenGuide }) {
                 </span>
             </div>
 
-            {/* Daftar Menu */}
             <div className="p-4 flex-1 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
                 {mainGroups.map((group) => (
                     <div key={group.groupTitle} className="space-y-1.5">

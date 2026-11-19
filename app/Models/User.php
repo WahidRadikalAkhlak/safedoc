@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -39,5 +40,30 @@ class User extends Authenticatable
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function beneficiaries(): HasMany
+    {
+        return $this->hasMany(Beneficiary::class);
+    }
+
+    public function credentials(): HasMany
+    {
+        return $this->hasMany(VaultCredential::class);
+    }
+
+    public function testaments(): HasMany
+    {
+        return $this->hasMany(Testament::class);
+    }
+
+    public function personnelRecords(): HasMany
+    {
+        return $this->hasMany(PersonnelRecord::class);
+    }
+
+    public function memoryItems(): HasMany
+    {
+        return $this->hasMany(MemoryItem::class);
     }
 }

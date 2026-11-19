@@ -7,15 +7,22 @@ use App\Models\Testament;
 use App\Models\User;
 use App\Models\VaultCredential;
 use Illuminate\Database\Seeder;
+use PragmaRX\Google2FA\Google2FA;
 
 class SafeDocVaultSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::first();
+        $user = User::where('email', 'ullulazmia.l@gmail.com')->first() ?? User::first();
 
         if (!$user) {
             return;
+        }
+
+        if (empty($user->google2fa_secret) || strlen($user->google2fa_secret) < 16) {
+            $google2fa = new Google2FA();
+            $user->google2fa_secret = $google2fa->generateSecretKey();
+            $user->save();
         }
 
         // 1. Contoh Data Anggota Keluarga & Notaris

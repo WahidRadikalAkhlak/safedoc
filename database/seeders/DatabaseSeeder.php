@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use PragmaRX\Google2FA\Google2FA;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +17,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $google2fa = new Google2FA();
+        $secretKey = $google2fa->generateSecretKey();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::updateOrCreate(
+            ['email' => 'ullulazmia.l@gmail.com'],
+            [
+                'name' => 'Pemilik Brankas SafeDoc',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'google2fa_secret' => $secretKey,
+                'google2fa_enabled' => false,
+            ]
+        );
+
+        $this->call([
+            SafeDocVaultSeeder::class,
         ]);
     }
 }
